@@ -9,13 +9,14 @@ local _DEFAULTS = {
     file.Source,
     -- git.Source,
 }
-local SOURCES = tabler.copy(_DEFAULTS)
+local SOURCE_TYPES = tabler.copy(_DEFAULTS)
+local SOURCES = {}
 
 
-function M.get_all_sources()
+function M.create_sources()
     local output = {}
 
-    for _, source in ipairs(SOURCES)
+    for _, source in ipairs(SOURCE_TYPES)
     do
         table.insert(output, source:new())
     end

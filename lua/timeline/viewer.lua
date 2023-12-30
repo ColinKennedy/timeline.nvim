@@ -3,12 +3,23 @@
 --- @module 'timeline.viewer'
 ---
 
-local constant = require("timeline._core.constant")
 local configuration = require("timeline._core.configuration")
+local constant = require("timeline._core.constant")
 local request = require("timeline._core.request")
+local source_registry = require("timeline._core.source_registry")
 local tabler = require("timeline._core.utilities.tabler")
 
 local M = {}
+
+
+local function _add_mappings(buffer)
+    configuration.DATA.mappings.restore
+    restore = "u",
+    show_default = "o",
+    show_details = "de",
+    show_diff = "di",
+    show_summary = "s",
+end
 
 
 local function _apply_records_to_viewer(records, buffer)
@@ -64,14 +75,13 @@ function M.view(path)
 
     local records = {}
 
-    -- TODO: Add this back later
-    -- for _, source in ipairs(configuration.DATA.sources)
-    for _, source in ipairs(require("timeline._core.source_registry").get_all_sources())
+    for _, source in ipairs(source_registry.SOURCES)
     do
         tabler.extend(source:collect(payload, configuration.DATA), records)
     end
 
     _apply_records_to_viewer(records, buffer)
+    _add_mappings(buffer)
 end
 
 return M

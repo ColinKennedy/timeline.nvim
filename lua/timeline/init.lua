@@ -22,8 +22,9 @@ end
 local function _setup_configuration()
     data = data or {}
     data = vim.tbl_deep_extend("force", configuration._DEFAULTS, data)
+    _validate_data(data)
 
-    local sources = source_registry.get_all_sources()
+    local sources = source_registry.create_sources()
 
     -- for _, source in ipairs(sources)
     -- do
@@ -33,9 +34,8 @@ local function _setup_configuration()
     --     end
     -- end
 
-    data.sources = sources
-    _validate_data(data)
     configuration.DATA = data
+    source_registry.SOURCES = sources
 end
 
 

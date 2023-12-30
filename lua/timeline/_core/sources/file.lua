@@ -1,4 +1,5 @@
 local base = require("timeline._core.sources.base")
+local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
 local filer = require("timeline._core.utilities.filer")
 local record_ = require("timeline._core.components.record")
@@ -7,7 +8,7 @@ local terminal = require("timeline._core.utilities.terminal")
 
 local M = {}
 
-M.Source = setmetatable({}, { __index = base.Source })
+M.Source = base.Source:new()
 
 
 local function _get_commit_datetime(commit, repository)
@@ -84,7 +85,32 @@ local function _get_repository_path(path)
 end
 
 
-local function _collect(payload)
+local function _open_as_diff()
+    local line = vim.fn.line(".")  -- 1-or-more value
+    local record = vim.b._timeline_records[line]
+
+    if record == nil
+    then
+        vim.api.nvim_err_writeln("No current record could be found. This is a bug!")
+
+        return
+    end
+
+    local commit = record.details.git_commit
+
+    if commit == nil
+    then
+        vim.api.nvim_err_writeln("No git commit could be found. This is a bug!")
+
+        return
+    end
+
+    -- TODO: finish
+    print("GOT THIS FAR")
+end
+
+
+local function _collect(payload, icon)
     local output = {}
 
     -- TODO: Add this back in later
@@ -108,9 +134,7 @@ local function _collect(payload)
                 record_.Record:new(
                     {
                         actions=function()
-                            return {
-                                Action:new()
-                            }
+                            return { open = _open_as_diff }
                         end,
                         datetime=function()
                             return _get_commit_datetime(commit, repository)
@@ -120,7 +144,7 @@ local function _collect(payload)
                             return "Details, here"
                         end,
                         icon=function()
-                            return ""
+                            return icon
                         end,
                         label=function()
                             return "File Save"
@@ -138,31 +162,27 @@ local function _collect(payload)
 end
 
 
-function M.Source:get_name(self)
-    return "File"
+function M.Source:get_type()
+    return "file"
 end
 
 
-function M.Source:get_name(self)
-    return "File"
-end
-
-
-function M.Source.collect(self, payload)
+function M.Source:collect(payload)
     local results = base.Source.collect(self, payload)
 
-    tabler.extend(_collect(payload), results)
+    tabler.extend(_collect(payload, self:get_icon()), results)
 
     return results
 end
 
 
 function M.Source:new()
-    -- TODO: I have no idea what I'm doing. Fix
-    local instance = base.Source.new(instance)
-    instance.get_icon = M.Source.get_icon
-    instance.get_name = M.Source.get_name
-    instance.collect = M.Source.collect
+    local instance = base.Source:new(instance)
+    setmetatable(instance, self)
+    self.__index = self
+    -- instance.get_icon = M.Source.get_icon
+    -- instance.get_name = M.Source.get_name
+    -- instance.collect = M.Source.collect
 
     return instance
 end

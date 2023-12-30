@@ -6,18 +6,19 @@ M.Source = {}
 
 
 -- TODO: Tell them to override this
-function M.Source:collect(self, payload)
+function M.Source:collect(payload)
     return {}
 end
 
 
 
-function M.Source:get_name(self)
-    return "Base"
+-- TODO: Tell them to override this
+function M.Source:get_type()
+    return "base"
 end
 
 
-function M.Source:get_icon(self)
+function M.Source:get_icon()
     return configuration.DATA.sources[self:get_type()].icon
 end
 
