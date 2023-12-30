@@ -1,3 +1,5 @@
+local configuration = require("timeline._core.configuration")
+
 local M = {}
 
 M.Source = {}
@@ -10,20 +12,18 @@ end
 
 
 
-local function _get_name()
+function M.Source:get_name(self)
     return "Base"
 end
 
 
-local function _get_icon()
-    return "Base"
+function M.Source:get_icon(self)
+    return configuration.DATA.sources[self:get_type()].icon
 end
 
 
 function M.Source:new()
     local self = setmetatable({}, { __index = M.Source })
-    self.get_icon = _get_icon
-    self.get_name = _get_name
 
     return self
 end
