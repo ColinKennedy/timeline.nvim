@@ -31,6 +31,12 @@ TODO add screenshot
     - Add icons per entry - fallback to characters if the fonts are not installed
         git - "󰜘"
         file - 
+    - Actions
+        - If the user selects multiple lines in visual mode
+            - If not allowed, fail early
+            - Otherwise
+                - If multiple types of records were selected, prompt the user to select one type
+                - Then run the action based on the selection
 
 - Configuration
     - Allow a different format for displaying datetime
