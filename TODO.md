@@ -28,6 +28,13 @@ TODO add screenshot
     - Compare previous
     - Configuration options - allow users to configure what is saved (security)
     - Maybe need to batch stuff together
+    - Add icons per entry - fallback to characters if the fonts are not installed
+        git - "󰜘"
+        file - 
+
+- Configuration
+    - Allow a different format for displaying datetime
+    - Allow people to change the date timezone
 
 
 - Undo / Redo
@@ -157,3 +164,23 @@ TODO add screenshot
     - type: string
     - id: GitCommit | string
 
+- Split the "core" of this plugin which needs autocommands to a separate plugin
+- Let the "UI" portion be separate
+
+
+- Open (diff / summary)
+    - Allows visual selection
+- Open diff
+    - Allows visual selection
+- Open summary
+    - Allows visual selection
+- Show details
+    - Allows visual selection
+- Restore to this point
+    - Single selection only
+
+
+## Developing
+```
+w | lua require("plenary.reload").reload_module("timeline"); require("timeline").setup(); require("timeline.viewer").view_current()
+```

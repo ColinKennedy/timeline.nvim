@@ -19,6 +19,16 @@ TODO add videos / GIFs
 ## Installation
 TODO: Fill all of this out
 
+### Lazy.nvim
+```lua
+{
+    "ColinKennedy/timeline.nvim",
+    config = function()
+        require("timeline").setup()
+    end
+}
+```
+
 ## Features
 ### File Related Changes
 #### Changed Externally
