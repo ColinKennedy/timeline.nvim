@@ -4,7 +4,7 @@
 ---
 
 local request = require("timeline._core.request")
-local tabler = require("timeline._core.tabler")
+local tabler = require("timeline._core.utilities.tabler")
 
 local M = {}
 

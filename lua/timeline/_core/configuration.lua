@@ -1,9 +1,10 @@
 local M = {}
 
-local _DEFAULTS = {
+M._DEFAULTS = {
     repository_paths = {"~/.vim_custom_backups"},
     sources = {},
 }
-local M.DATA = {}
+
+M.DATA = {}
 
 return M
