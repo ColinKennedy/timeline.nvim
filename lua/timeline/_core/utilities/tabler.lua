@@ -16,10 +16,12 @@ local function _copy(array, seen)
     return result
 end
 
+
 --- @source https://stackoverflow.com/a/26367080
 function M.copy(array)
     return _copy(array)
 end
+
 
 function M.extend(items, array)
     for _, item in ipairs(items)
@@ -27,5 +29,32 @@ function M.extend(items, array)
         table.insert(array, item)
     end
 end
+
+
+function M.filter(item_to_filter, array)
+    local output = {}
+
+    for _, item in ipairs(array)
+    do
+        if item ~= item_to_filter
+        then
+            table.insert(output, item)
+        end
+    end
+
+    return output
+end
+
+
+function M.slice(table_, first, last, step)
+    local sliced = {}
+
+    for i = first or 1, last or #table_, step or 1 do
+        sliced[#sliced+1] = table_[i]
+    end
+
+    return sliced
+end
+
 
 return M
