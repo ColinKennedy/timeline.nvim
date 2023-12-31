@@ -12,7 +12,34 @@ local function _make_window(path, repository, commit, text)
 end
 
 
-function M.diff_records(path, repository, start_commit, end_commit)
+function M.open_diff_records_and_summary(records)
+    -- TODO: Add the summary
+    local start_record = records[1]
+
+    local start_details = start_record:get_details()
+    local start_commit = start_details.git_commit
+
+    if start_commit == nil
+    then
+        vim.api.nvim_err_writeln("Cannot load diff. No data was found.")
+    end
+
+    local end_record = records[#records]
+    local end_commit = nil
+
+    if start_record ~= end_record
+    then
+        end_commit = end_record:get_details().git_commit
+    end
+
+    local source_path = start_details.file_path
+    local repository = start_details.repository
+
+    M.open_diff_records(source_path, repository, start_commit, end_commit)
+end
+
+
+function M.open_diff_records(path, repository, start_commit, end_commit)
     if end_commit == nil
     then
         end_commit = start_commit .. "~"
@@ -21,10 +48,7 @@ function M.diff_records(path, repository, start_commit, end_commit)
     local template = "git show %s:%s"
     local start_command = string.format(template, start_commit, path)
     local start_success, start_stdout, start_stderr = unpack(
-        terminal.run(
-            start_command,
-            {cwd=repository}
-        )
+        terminal.run(start_command, { cwd=repository })
     )
 
     if not start_success
@@ -40,11 +64,9 @@ function M.diff_records(path, repository, start_commit, end_commit)
         return
     end
 
+    local end_command = string.format(template, end_commit, path)
     local end_success, end_stdout, end_stderr = unpack(
-        terminal.run(
-            string.format(template, end_commit, path),
-            {cwd=repository}
-        )
+        terminal.run(end_command, { cwd=repository })
     )
 
     if not end_success

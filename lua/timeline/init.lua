@@ -10,7 +10,35 @@ local M = {}
 
 
 local function _validate_data(data)
-    -- TODO: Add ~ => /home/foo conversions
+    paths = data.repository_paths
+
+    if vim.tbl_isempty(paths)
+    then
+        vim.api.nvim_err_writeln('"repository_paths" key cannot be empty.')
+
+        return false
+    end
+
+    local repository_paths = {}
+
+    for _, path in ipairs(paths)
+    do
+        if not vim.fn.isdirectory(path)
+        then
+            vim.api.nvim_err_writeln(
+                string.format('"repository_paths" key "%s" does not exist.', path)
+            )
+
+            return false
+        end
+
+        table.insert(repository_paths, vim.fn.expand(path))
+    end
+
+    data.repository_paths = repository_paths
+    -- TODO: Check the other keys and stuff
+
+    return true
 end
 
 
@@ -19,8 +47,8 @@ local function _setup_autocommands()
 end
 
 
-local function _setup_configuration()
-    data = data or {}
+local function _setup_configuration(data)
+    local data = data or {}
     data = vim.tbl_deep_extend("force", configuration._DEFAULTS, data)
     _validate_data(data)
 
@@ -40,7 +68,7 @@ end
 
 
 function M.setup(data)
-    _setup_configuration()
+    _setup_configuration(data)
     _setup_autocommands()
 end
 
