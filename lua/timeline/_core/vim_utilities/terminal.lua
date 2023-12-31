@@ -1,4 +1,4 @@
-local tabler = require("timeline._core.utilities.tabler")
+local tabler = require("timeline._core.vim_utilities.tabler")
 
 local M = {}
 

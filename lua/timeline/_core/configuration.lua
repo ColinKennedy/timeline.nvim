@@ -1,14 +1,31 @@
+local action_triage = require("timeline._core.components.action_triage")
+
 local M = {}
 
 M._DEFAULTS = {
     mappings = {
-        restore = "u",
-        show_default = "o",
-        show_details = "de",
-        show_diff = "di",
-        show_summary = "s",
+        open = {
+            key = "o",
+            command = action_triage.run_open_action,
+            description = "Run the default-[o]pen for 1+ records, if allowed.",
+        },
+        restore = {
+            key = "u",
+            command = action_triage.run_restore_action,
+            description = "[u]ndo / restore to the current record.",
+        },
+        show_diff = {
+            key = "d",
+            command = action_triage.run_show_diff_action,
+            description = "Create a [d]iff of the 1+ records, if allowed.",
+        },
+        show_manifest = {
+            key = "m",
+            command = action_triage.run_show_manifest_action,
+            description = "Show [m]anifest for 1+ records, if allowed. e.g. show its internal/debug details.",
+        },
     },
-    repository_paths = {"~/.vim_custom_backups"},
+    repository_paths = {vim.fn.expand("~/.vim_custom_backups")},
     sources = {
         file = { icon = "" },
         git = { icon = "󰜘" },

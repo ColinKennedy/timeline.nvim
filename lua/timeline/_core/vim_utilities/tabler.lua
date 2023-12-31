@@ -1,5 +1,6 @@
 local M = {}
 
+--- @source https://stackoverflow.com/a/26367080
 local function _copy(array, seen)
     if type(array) ~= "table" then return array end
     if seen and seen[array] then return seen[array] end
@@ -17,7 +18,17 @@ local function _copy(array, seen)
 end
 
 
---- @source https://stackoverflow.com/a/26367080
+local function has_value(table_, expected_value)
+    for index, value in ipairs(table_) do
+        if value == expected_value then
+            return true
+        end
+    end
+
+    return false
+end
+
+
 function M.copy(array)
     return _copy(array)
 end
@@ -49,8 +60,9 @@ end
 function M.slice(table_, first, last, step)
     local sliced = {}
 
-    for i = first or 1, last or #table_, step or 1 do
-        sliced[#sliced+1] = table_[i]
+    for index = first or 1, last or #table_, step or 1
+    do
+        sliced[#sliced + 1] = table_[index]
     end
 
     return sliced

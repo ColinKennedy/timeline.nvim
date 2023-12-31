@@ -4,7 +4,7 @@
 ---
 
 local configuration = require("timeline._core.configuration")
-local source_registry = require("timeline._core.source_registry")
+local source_registry = require("timeline._core.components.source_registry")
 
 local M = {}
 

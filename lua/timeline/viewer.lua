@@ -5,21 +5,12 @@
 
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
-local request = require("timeline._core.request")
-local source_registry = require("timeline._core.source_registry")
-local tabler = require("timeline._core.utilities.tabler")
+local keymap_manager = require("timeline._core.components.keymap_manager")
+local request = require("timeline._core.components.request")
+local source_registry = require("timeline._core.components.source_registry")
+local tabler = require("timeline._core.vim_utilities.tabler")
 
 local M = {}
-
-
-local function _add_mappings(buffer)
-    configuration.DATA.mappings.restore
-    restore = "u",
-    show_default = "o",
-    show_details = "de",
-    show_diff = "di",
-    show_summary = "s",
-end
 
 
 local function _apply_records_to_viewer(records, buffer)
@@ -43,8 +34,8 @@ local function _apply_records_to_viewer(records, buffer)
     end
 
     vim.api.nvim_buf_set_lines(buffer, 0, -1, false, lines)
-
     vim.api.nvim_buf_set_option(buffer, "modifiable", modifiable)
+    vim.api.nvim_buf_set_var(buffer, constant.BUFFER_RECORDS_VARIABLE, records)
 end
 
 
@@ -62,14 +53,26 @@ end
 
 
 function M.view_current()
-    local path = vim.fn.expand("%:p")
-    M.view(path)
+    local buffer = vim.fn.bufnr()
+
+    M.view_buffer(buffer)
 end
 
 
-function M.view(path)
-    local buffer, window = unpack(_create_viewer())
-    local height = vim.api.nvim_win_get_height(window)
+function M.view_buffer(source_buffer)
+    local path = vim.api.nvim_buf_get_name(source_buffer)
+
+    if path == ""
+    then
+        vim.api.nvim_err_writeln(
+            string.format('Buffer "%s" must have a file path on-disk.', source_buffer)
+        )
+
+        return
+    end
+
+    local timeline_buffer, timeline_window = unpack(_create_viewer())
+    local height = vim.api.nvim_win_get_height(timeline_window)
     local offset = 0
     local payload = request.Request:new(path, height, offset)
 
@@ -80,8 +83,8 @@ function M.view(path)
         tabler.extend(source:collect(payload, configuration.DATA), records)
     end
 
-    _apply_records_to_viewer(records, buffer)
-    _add_mappings(buffer)
+    _apply_records_to_viewer(records, timeline_buffer)
+    keymap_manager.initialize_buffer_mappings(timeline_buffer, source_buffer)
 end
 
 return M

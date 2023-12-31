@@ -1,6 +1,6 @@
 local M = {}
 
-local tabler = require("timeline._core.utilities.tabler")
+local tabler = require("timeline._core.vim_utilities.tabler")
 local file = require("timeline._core.sources.file")
 local git = require("timeline._core.sources.git")
 

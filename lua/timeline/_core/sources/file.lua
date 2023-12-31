@@ -1,10 +1,10 @@
 local base = require("timeline._core.sources.base")
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
-local filer = require("timeline._core.utilities.filer")
+local filer = require("timeline._core.vim_utilities.filer")
 local record_ = require("timeline._core.components.record")
-local tabler = require("timeline._core.utilities.tabler")
-local terminal = require("timeline._core.utilities.terminal")
+local tabler = require("timeline._core.vim_utilities.tabler")
+local terminal = require("timeline._core.vim_utilities.terminal")
 
 local M = {}
 
@@ -86,27 +86,22 @@ end
 
 
 local function _open_as_diff()
-    local line = vim.fn.line(".")  -- 1-or-more value
-    local record = vim.b._timeline_records[line]
+    local start_record, end_record = unpack(differ.get_records_to_diff())
 
-    if record == nil
+    if start_record == nil or end_record == nil
     then
-        vim.api.nvim_err_writeln("No current record could be found. This is a bug!")
+        vim.api.nvim_err_writeln(
+            string.format('Buffer "%s" has no records. Cannot diff.', buffer)
+        )
 
         return
     end
 
-    local commit = record.details.git_commit
+    print("It's time to diff!")
+    print(records[1])
+    print(records[#records])
 
-    if commit == nil
-    then
-        vim.api.nvim_err_writeln("No git commit could be found. This is a bug!")
-
-        return
-    end
-
-    -- TODO: finish
-    print("GOT THIS FAR")
+    records[1].actions.diff_this(records[1], records[#records])
 end
 
 
@@ -115,7 +110,7 @@ local function _collect(payload, icon)
 
     -- TODO: Add this back in later
     -- for _, repository in ipairs(configuration.repository_paths)
-    for _, repository in ipairs({"/home/selecaoone/.vim_custom_backups"})
+    for _, repository in ipairs({"/home/selecaotwo/.vim_custom_backups"})
     do
         for _, commit in ipairs(
             _get_latest_commits(

@@ -173,7 +173,6 @@ TODO add screenshot
 - Split the "core" of this plugin which needs autocommands to a separate plugin
 - Let the "UI" portion be separate
 
-
 - Open (diff / summary)
     - Allows visual selection
 - Open diff
@@ -190,3 +189,8 @@ TODO add screenshot
 ```
 w | lua require("plenary.reload").reload_module("timeline"); require("timeline").setup(); require("timeline.viewer").view_current()
 ```
+
+## TODO
+- Add FZF / Telescope integration when asking for a single record type.
+  Otherwise, use Vim's built-in input function
+- Make sure the Lua files and everything seem natural
