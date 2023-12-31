@@ -9,7 +9,8 @@ function M.Record:new(data)
     setmetatable(self, { __index = M.Record })
 
     self.get_actions = data.actions
-    self.get_datetime = data.datetime
+    self.get_datetime_text = data.datetime_text
+    self.get_datetime_number = data.datetime_number
     self.get_details = data.details
     self.get_icon = data.icon
     self.get_label = data.label

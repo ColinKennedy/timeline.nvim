@@ -1,3 +1,5 @@
+local luatz = require("timeline._vendors.luatz")
+
 local base = require("timeline._core.sources.base")
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
@@ -30,6 +32,10 @@ local function _collect(payload, icon)
             ) or {}
         )
         do
+            local get_datetime_number = function()
+                return git_parser.get_commit_datetime(commit, repository)
+            end
+
             table.insert(
                 output,
                 -- TODO: Figure out how to defer all of this but still do as few
@@ -40,8 +46,16 @@ local function _collect(payload, icon)
                         actions=function()
                             return { open = differ.open_diff_records_and_summary }
                         end,
-                        datetime=function()
-                            return git_parser.get_commit_datetime(commit, repository)
+                        datetime_number=get_datetime_number,
+                        datetime_text=function()
+                            local datetime = get_datetime_number()
+
+                            if datetime == nil
+                            then
+                                return "<No datetime found>"
+                            end
+
+                            return luatz.timetable.new_from_timestamp(tonumber(datetime))
                         end,
                         -- TODO: Add this, later
                         details=function()

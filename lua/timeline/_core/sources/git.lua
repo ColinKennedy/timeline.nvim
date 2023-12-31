@@ -1,3 +1,5 @@
+local luatz = require("timeline._vendors.luatz")
+
 local base = require("timeline._core.sources.base")
 local constant = require("timeline._core.constant")
 local differ = require("timeline._core.actions.differ")
@@ -13,20 +15,17 @@ M.Source = base.Source:new()
 local function _collect(payload, icon)
     local output = {}
 
-    -- TODO: Add this back in later
-    -- for _, repository in ipairs(configuration.repository_paths)
-    local repository_path = git_parser.get_repository_path(payload.path)
+    local repository_path = payload.path
     local repository = git_parser.get_repository_root(repository_path)
 
     if repository == nil
     then
-        print("NO REPOSITORY FOUDN")
         -- Exit silently because this source will be effectively disabled
         return {}
     end
 
     for _, commit in ipairs(
-        git_parser.get_latest_commits(
+        git_parser.get_latest_changes(
             repository,
             repository_path,
             payload.offset,
@@ -34,6 +33,10 @@ local function _collect(payload, icon)
         ) or {}
     )
     do
+        local get_datetime_number = function()
+            return git_parser.get_commit_datetime(commit, repository)
+        end
+
         table.insert(
             output,
             -- TODO: Figure out how to defer all of this but still do as few
@@ -44,8 +47,16 @@ local function _collect(payload, icon)
                     actions=function()
                         return { open = differ.open_diff_records_and_summary }
                     end,
-                    datetime=function()
-                        return git_parser.get_commit_datetime(commit, repository)
+                    datetime_number=get_datetime_number,
+                    datetime_text=function()
+                        local datetime = get_datetime_number()
+
+                        if datetime == nil
+                        then
+                            return "<No datetime found>"
+                        end
+
+                        return luatz.timetable.new_from_timestamp(tonumber(datetime))
                     end,
                     -- TODO: Add this, later
                     details=function()

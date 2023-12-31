@@ -6,7 +6,7 @@ local git = require("timeline._core.sources.git")
 
 -- TODO: Add more, here
 local _DEFAULTS = {
-    -- file.Source,
+    file.Source,
     git.Source,
 }
 local SOURCE_TYPES = tabler.copy(_DEFAULTS)

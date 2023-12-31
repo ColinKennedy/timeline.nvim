@@ -7,7 +7,7 @@ local M = {}
 
 
 function M.get_commit_datetime(commit, repository)
-    local command = string.format("git show --no-patch --format=%%ci %s", commit)
+    local command = string.format("git show --no-patch --format=%%ct %s", commit)
     local success, stdout, stderr = unpack(terminal.run(command, {cwd=repository}))
 
     if not success
@@ -46,10 +46,6 @@ function M.get_latest_changes(repository, path, start_index, end_index)
     stdout = tabler.filter("", stdout)
 
     return stdout
-end
-
-
-function M.get_latest_commits(repository, path, start_index, end_index)
 end
 
 

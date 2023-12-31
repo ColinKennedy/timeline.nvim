@@ -22,14 +22,14 @@ local function _apply_records_to_viewer(records, buffer)
     for _, record in ipairs(records)
     do
         local label = record:get_label()
-        local datetime = record:get_datetime()
+        local datetime = record:get_datetime_text()
         local icon = record:get_icon()
 
         if icon ~= nil
         then
-            table.insert(lines, string.format("%s %s - %s", icon, label, datetime))
+            table.insert(lines, string.format("%s %s", icon, label))
         else
-            table.insert(lines, string.format("%s - %s", label, datetime))
+            table.insert(lines, label)
         end
     end
 
@@ -83,6 +83,15 @@ function M.view_buffer(source_buffer)
         tabler.extend(source:collect(payload, configuration.DATA), records)
     end
 
+    -- Interleave the records by their date
+    table.sort(
+        records,
+        function(left, right)
+            return left:get_datetime_number() > right:get_datetime_number()
+        end
+    )
+
+    -- Create a new view and display the records
     _apply_records_to_viewer(records, timeline_buffer)
     keymap_manager.initialize_buffer_mappings(timeline_buffer, source_buffer)
 end
