@@ -9,6 +9,11 @@ local source_registry = require("timeline._core.components.source_registry")
 local M = {}
 
 
+--- Ensure `data` is correctly authored
+---
+--- @param data TimelineConfiguration User-provided settings to check.
+--- @return boolean # If the data is valid, return `true`. Otherwise fail with a message.
+---
 local function _validate_data(data)
     paths = data.repository_paths
 
@@ -47,6 +52,10 @@ local function _setup_autocommands()
 end
 
 
+--- Apply configuration options to timeline.nvim.
+---
+--- @param data TimelineConfiguration The settings which control timeline.nvim.
+---
 local function _setup_configuration(data)
     local data = data or {}
     data = vim.tbl_deep_extend("force", configuration._DEFAULTS, data)
@@ -67,6 +76,10 @@ local function _setup_configuration(data)
 end
 
 
+--- Initialize this plugin so it can run
+---
+--- @param data TimelineConfiguration The settings which control timeline.nvim.
+---
 function M.setup(data)
     _setup_configuration(data)
     _setup_autocommands()

@@ -39,6 +39,7 @@ end
 
 
 local function _ask_for_record_type(record_types)
+    -- TODO: Change this function to allow for minimal typing, like how Vim does it
     local lines = {}
     local types = {}
 

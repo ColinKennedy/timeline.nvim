@@ -13,6 +13,11 @@ local tabler = require("timeline._core.vim_utilities.tabler")
 local M = {}
 
 
+--- Place `records` onto `buffer`.
+---
+--- @param records Record[] The data to display in `buffer`.
+--- @param buffer number A 0-or-more to be replaced by `records`.
+---
 local function _apply_records_to_viewer(records, buffer)
     local modifiable = vim.api.nvim_buf_get_option(buffer, "modifiable")
     vim.api.nvim_buf_set_option(buffer, "modifiable", true)
@@ -38,6 +43,14 @@ local function _apply_records_to_viewer(records, buffer)
 end
 
 
+local function _apply_timeline_auto_commands(source_window)
+end
+
+
+--- Make a new Timeline View.
+---
+--- @return BufferWindowPair # The Timeline View buffer and its window.
+---
 local function _create_viewer()
     vim.cmd.vsplit()
     vim.cmd.enew()
@@ -53,12 +66,23 @@ local function _create_viewer()
 end
 
 
+--- Load a Timeline View for the current window.
 function M.view_current()
     M.view_window(vim.fn.win_getid())
 end
 
 
+--- Load a Timeline View for `source_window`.
+---
+--- @param source_window number A 0-or-more value of some buffer to display.
+---
 function M.view_window(source_window)
+    if source_window == 0
+    then
+        -- Later function calls require an explicit window ID so grab it, now
+        source_window = vim.fn.win_getid()
+    end
+
     local source_buffer = vim.api.nvim_win_get_buf(source_window)
     local path = vim.api.nvim_buf_get_name(source_buffer)
 
@@ -96,5 +120,6 @@ function M.view_window(source_window)
     _apply_timeline_auto_commands(source_window)
     keymap_manager.initialize_buffer_mappings(timeline_buffer, source_buffer)
 end
+
 
 return M
