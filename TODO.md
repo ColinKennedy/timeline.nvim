@@ -198,3 +198,5 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Remove any unneeded init.lua files
 - Figure out how to clean up the output of terminal.run
 - Ask Neovim maintainers how to make pop-ups show above multiple windows at once (floating)
+- Add virtual text for the date
+- Make the diff view better
