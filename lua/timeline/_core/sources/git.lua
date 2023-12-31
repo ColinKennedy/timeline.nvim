@@ -24,6 +24,8 @@ local function _collect(payload, icon)
         return {}
     end
 
+    local cache = {}
+
     for _, commit in ipairs(
         git_parser.get_latest_changes(
             repository,
@@ -33,8 +35,17 @@ local function _collect(payload, icon)
         ) or {}
     )
     do
+        cache[commit] = {}
+
         local get_datetime_number = function()
-            return git_parser.get_commit_datetime(commit, repository)
+            if cache[commit]["datetime"] ~= nil
+            then
+                return cache[commit]["datetime"]
+            end
+
+            cache[commit]["datetime"] = git_parser.get_commit_datetime(commit, repository)
+
+            return cache[commit]["datetime"]
         end
 
         table.insert(

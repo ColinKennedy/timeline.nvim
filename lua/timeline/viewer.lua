@@ -22,7 +22,6 @@ local function _apply_records_to_viewer(records, buffer)
     for _, record in ipairs(records)
     do
         local label = record:get_label()
-        local datetime = record:get_datetime_text()
         local icon = record:get_icon()
 
         if icon ~= nil
@@ -43,6 +42,8 @@ local function _create_viewer()
     vim.cmd.vsplit()
     vim.cmd.enew()
 
+    vim.cmd("vertical resize " .. configuration.DATA.timeline_window.size)
+
     local buffer = vim.fn.bufnr("%")
 
     vim.api.nvim_buf_set_option(buffer, "filetype", constant.VIEWER_FILE_TYPE)
@@ -53,19 +54,18 @@ end
 
 
 function M.view_current()
-    local buffer = vim.fn.bufnr()
-
-    M.view_buffer(buffer)
+    M.view_window(vim.fn.win_getid())
 end
 
 
-function M.view_buffer(source_buffer)
+function M.view_window(source_window)
+    local source_buffer = vim.api.nvim_win_get_buf(source_window)
     local path = vim.api.nvim_buf_get_name(source_buffer)
 
     if path == ""
     then
         vim.api.nvim_err_writeln(
-            string.format('Buffer "%s" must have a file path on-disk.', source_buffer)
+            string.format('Buffer "%s" must be a file path on-disk.', source_buffer)
         )
 
         return
@@ -93,6 +93,7 @@ function M.view_buffer(source_buffer)
 
     -- Create a new view and display the records
     _apply_records_to_viewer(records, timeline_buffer)
+    _apply_timeline_auto_commands(source_window)
     keymap_manager.initialize_buffer_mappings(timeline_buffer, source_buffer)
 end
 

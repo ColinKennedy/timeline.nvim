@@ -17,10 +17,14 @@ M.Source = base.Source:new()
 local function _collect(payload, icon)
     local output = {}
 
+    local cache = {}
+
     -- TODO: Add this back in later
     -- for _, repository in ipairs(configuration.repository_paths)
-    for _, repository in ipairs({"/home/selecaoone/.vim_custom_backups"})
+    for _, repository in ipairs({"/home/selecaotwo/.vim_custom_backups"})
     do
+        cache[repository] = {}
+
         local repository_path = git_parser.get_repository_path(payload.path)
 
         for _, commit in ipairs(
@@ -32,8 +36,20 @@ local function _collect(payload, icon)
             ) or {}
         )
         do
+            cache[repository][commit] = {}
+
             local get_datetime_number = function()
-                return git_parser.get_commit_datetime(commit, repository)
+                if cache[repository][commit]["datetime"] ~= nil
+                then
+                    return cache[repository][commit]["datetime"]
+                end
+
+                cache[repository][commit]["datetime"] = git_parser.get_commit_datetime(
+                    commit,
+                    repository
+                )
+
+                return cache[repository][commit]["datetime"]
             end
 
             table.insert(

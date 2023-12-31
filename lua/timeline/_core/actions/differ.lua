@@ -2,13 +2,34 @@ local terminal = require("timeline._core.vim_utilities.terminal")
 
 local M = {}
 
+local _TIMELINE_DIFF_GROUP = vim.api.nvim_create_augroup(
+    "TimelineDifferAutoGroup", { clear = true }
+)
 
 local function _make_window(path, repository, commit, text)
     -- This file name is a simple URI, since it's a snapshot in time and not a real file
     vim.cmd(string.format("file git_commit:%s:%s:%s", path, repository, commit))
-    local buffer = 0
+
+    local buffer = vim.fn.bufnr()
     vim.api.nvim_buf_set_lines(buffer, 0, -1, false, text)
-    -- vim.api.nvim_buf_set_option(buffer, "modifiable", false)
+    local window = vim.fn.win_getid()
+
+    -- When the window is closed, close the buffer so that it can be used again, if needed
+    local cursor_moved = vim.api.nvim_create_autocmd(
+        "WinClosed",
+        {
+            group = group,
+            callback = function()
+                if not vim.api.nvim_win_is_valid(window)
+                then
+                    return
+                end
+
+                vim.cmd("bdelete! " .. buffer)
+            end,
+            buffer = buffer,
+        }
+    )
 end
 
 

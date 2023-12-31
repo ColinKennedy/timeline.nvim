@@ -30,7 +30,11 @@ M._DEFAULTS = {
         file = { icon = "" },
         git = { icon = "󰜘" },
     },
-    -- TODO: Add window defaults (width [percentage, fixed width, etc])
+    timeline_window = {
+        size = 20,
+        -- TODO: Add window defaults (width [percentage, fixed width, etc])
+        -- size = "%20",
+    }
 }
 
 M.DATA = {}
