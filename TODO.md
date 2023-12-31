@@ -194,3 +194,7 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Add FZF / Telescope integration when asking for a single record type.
   Otherwise, use Vim's built-in input function
 - Make sure the Lua files and everything seem natural
+- Remove old print calls
+- Remove any unneeded init.lua files
+- Figure out how to clean up the output of terminal.run
+- Ask Neovim maintainers how to make pop-ups show above multiple windows at once (floating)
