@@ -24,6 +24,7 @@ local function _collect(payload, icon)
         return {}
     end
 
+    -- TODO: Find a better way to implement a cache
     local cache = {}
 
     for _, commit in ipairs(
@@ -56,7 +57,14 @@ local function _collect(payload, icon)
             record_.Record:new(
                 {
                     actions=function()
-                        return { open = differ.open_diff_records_and_summary }
+                        return {
+                            open = function(records)
+                                differ.open_diff_records_and_summary(
+                                    records,
+                                    payload.source_window
+                                )
+                            end
+                        }
                     end,
                     datetime_number=get_datetime_number,
                     datetime_text=function()

@@ -74,13 +74,13 @@ function M.view_window(source_window)
     local timeline_buffer, timeline_window = unpack(_create_viewer())
     local height = vim.api.nvim_win_get_height(timeline_window)
     local offset = 0
-    local payload = request.Request:new(path, height, offset)
+    local payload = request.Request:new(path, height, offset, source_window)
 
     local records = {}
 
     for _, source in ipairs(source_registry.SOURCES)
     do
-        tabler.extend(source:collect(payload, configuration.DATA), records)
+        tabler.extend(source:collect(payload), records)
     end
 
     -- Interleave the records by their date

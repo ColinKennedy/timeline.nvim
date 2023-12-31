@@ -17,6 +17,7 @@ M.Source = base.Source:new()
 local function _collect(payload, icon)
     local output = {}
 
+    -- TODO: Find a better way to implement a cache
     local cache = {}
 
     -- TODO: Add this back in later
@@ -60,7 +61,17 @@ local function _collect(payload, icon)
                 record_.Record:new(
                     {
                         actions=function()
-                            return { open = differ.open_diff_records_and_summary }
+                            return {
+                                open = function(records)
+                                    local window = payload.source_window
+                                    if not vim.api.nvim_win_is_valid(window)
+                                    then
+                                        window = nil
+                                    end
+
+                                    differ.open_diff_records_and_summary(records, window)
+                                end
+                            }
                         end,
                         datetime_number=get_datetime_number,
                         datetime_text=function()

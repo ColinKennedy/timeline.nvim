@@ -11,14 +11,15 @@ M.Request = {
 }
 
 
-function M.Request:new(path, height, offset)
-    local object = {};
+function M.Request:new(path, height, offset, source_window)
+    local object = {}
     setmetatable(object, self)
     self.__index = self
 
     object.height = height
     object.offset = offset
     object.path = path
+    object.source_window = source_window
 
     return object
 end

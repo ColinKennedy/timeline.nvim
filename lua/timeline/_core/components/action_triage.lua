@@ -63,7 +63,7 @@ local function _ask_for_record_type(record_types)
 
         local lowered = result:lower()
 
-        if tabler.has_value(types, lowered)
+        if types[lowered] ~= nil
         then
             return types[lowered]
         end

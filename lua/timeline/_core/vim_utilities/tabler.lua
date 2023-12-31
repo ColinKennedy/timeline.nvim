@@ -19,7 +19,7 @@ end
 
 
 function M.has_value(table_, expected_value)
-    for index, value in ipairs(table_) do
+    for _, value in ipairs(table_) do
         if value == expected_value then
             return true
         end

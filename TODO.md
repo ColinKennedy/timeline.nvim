@@ -201,3 +201,9 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Add virtual text for the date
 - Make the diff view better
 - Do profiling and figure out how to get the code to be faster
+- Make the differ better. As diffoff should remove everything and not keep any buffers
+- Git commit diff isn't working
+- Wasn't there a new diff algorithm for Neovim? Try that
+    - https://www.reddit.com/r/neovim/comments/stcml3/patience_diff_algorithm/
+    - https://github.com/neovim/neovim/pull/14537
+- Reduce the amount of closures used in the codebase

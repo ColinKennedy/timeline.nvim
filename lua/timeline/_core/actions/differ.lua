@@ -33,7 +33,7 @@ local function _make_window(path, repository, commit, text)
 end
 
 
-function M.open_diff_records_and_summary(records)
+function M.open_diff_records_and_summary(records, replacement_window)
     -- TODO: Add the summary
     local start_record = records[1]
 
@@ -56,11 +56,23 @@ function M.open_diff_records_and_summary(records)
     local source_path = start_details.file_path
     local repository = start_details.repository
 
-    M.open_diff_records(source_path, repository, start_commit, end_commit)
+    M.open_diff_records(
+        source_path,
+        repository,
+        start_commit,
+        end_commit,
+        replacement_window
+    )
 end
 
 
-function M.open_diff_records(path, repository, start_commit, end_commit)
+function M.open_diff_records(
+    path,
+    repository,
+    start_commit,
+    end_commit,
+    replacement_window
+)
     if end_commit == nil
     then
         end_commit = start_commit .. "~"
@@ -68,7 +80,7 @@ function M.open_diff_records(path, repository, start_commit, end_commit)
 
     local template = "git show %s:%s"
     local start_command = string.format(template, start_commit, path)
-    local start_success, start_stdout, start_stderr = unpack(
+    local start_success, start_stdout, _ = unpack(
         terminal.run(start_command, { cwd=repository })
     )
 
@@ -76,9 +88,10 @@ function M.open_diff_records(path, repository, start_commit, end_commit)
     then
         vim.api.nvim_err_writeln(
             string.format(
-                'Start-commit command "%s" failed to run with "%s".',
+                'Start-commit command "%s" at directory "%s" failed to run with "%s".',
                 start_command,
-                table.concat(start_stderr, "\n")
+                repository,
+                table.concat(start_stdout, "\n")
             )
         )
 
@@ -86,7 +99,7 @@ function M.open_diff_records(path, repository, start_commit, end_commit)
     end
 
     local end_command = string.format(template, end_commit, path)
-    local end_success, end_stdout, end_stderr = unpack(
+    local end_success, end_stdout, _ = unpack(
         terminal.run(end_command, { cwd=repository })
     )
 
@@ -94,9 +107,10 @@ function M.open_diff_records(path, repository, start_commit, end_commit)
     then
         vim.api.nvim_err_writeln(
             string.format(
-                'End-commit command "%s" failed to run with "%s".',
+                'End-commit command "%s" at directory "%s" failed to run with "%s".',
                 end_command,
-                table.concat(end_stderr, "\n")
+                repository,
+                table.concat(end_stdout, "\n")
             )
         )
 
@@ -104,7 +118,14 @@ function M.open_diff_records(path, repository, start_commit, end_commit)
         return
     end
 
-    vim.cmd.vnew()
+    if replacement_window ~= nil
+    then
+        vim.api.nvim_set_current_win(replacement_window)
+        vim.cmd.enew()
+    else
+        vim.cmd.vnew()
+    end
+
     _make_window(path, repository, start_commit, start_stdout)
     vim.cmd.diffthis()  -- Mark the first window to diff from
     vim.cmd.vnew()
