@@ -49,6 +49,10 @@ function M.get_latest_changes(repository, path, start_index, end_index)
 end
 
 
+function M.get_latest_commits(repository, path, start_index, end_index)
+end
+
+
 function M.get_repository_path(path)
     local stripped = filer.lstrip_path(path)
     local repository_relative_path = filer.join_path({vim.fn.hostname(), stripped})
@@ -58,7 +62,20 @@ end
 
 
 function M.get_repository_root(path)
-    return nil
+    local command = "git rev-parse --show-toplevel"
+    local success, stdout, stderr = unpack(terminal.run(command, { cwd=repository }))
+
+    if not success
+    then
+        vim.api.nvim_err_writeln(string.format('Command "%s" failed to run.', command))
+        vim.api.nvim_err_writeln(stderr)
+
+        return nil
+    end
+
+    stdout = tabler.filter("", stdout)
+
+    return stdout[1]
 end
 
 
