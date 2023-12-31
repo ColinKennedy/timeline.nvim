@@ -8,11 +8,11 @@ local M = {}
 local function _find_next_record_of_same_type(records, start_index)
     -- TODO: is this for-loop inclusive on the end? Check
     local record = records[start_index]
-    local expected = record:get_type()
+    local expected = record:get_record_type()
 
     for index = start_line + 1, #records
     do
-        if records[index]:get_type() == expected
+        if records[index]:get_record_type() == expected
         then
             return index
         end
@@ -27,9 +27,7 @@ local function _get_record_types(records)
 
     for _, record in ipairs(records)
     do
-        print("RECORD")
-        print(vim.inspect(record))
-        local record_type = record:get_type()
+        local record_type = record:get_record_type()
         if not tabler.has_value(types, record_type)
         then
             table.insert(types, record_type)
@@ -80,7 +78,7 @@ local function _filter_records_by_type(record_type, records)
 
     for _, record in ipairs(records)
     do
-        if record:get_type() == record_type
+        if record:get_record_type() == record_type
         then
             table.insert(output, record)
         end
@@ -171,9 +169,9 @@ end
 
 
 function M.run_open_action(timeline_buffer, source_buffer)
-    local start_record, end_record = unpack(_get_records_range(timeline_buffer))
+    local records = _get_selected_records(timeline_buffer)
 
-    if start_record == nil or end_record == nil
+    if records == nil
     then
         local name = vim.fn.bufname(source_buffer) or source_buffer
 
@@ -184,7 +182,18 @@ function M.run_open_action(timeline_buffer, source_buffer)
         return
     end
 
-    records[1].actions.open(records[#records])
+    local caller = records[1]:get_actions().open
+
+    if caller == nil
+    then
+        vim.api.nvim_err_writeln(
+            string.format('Record "%s" has no open action.', vim.inspect(record))
+        )
+
+        return
+    end
+
+    caller(records)
 end
 
 

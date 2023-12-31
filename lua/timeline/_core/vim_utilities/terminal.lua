@@ -38,6 +38,9 @@ local _run_shell_command = function(command, options)
         vim.api.nvim_err_writeln('Job ID is invalid "' .. tostring(job) .. '"')
 
         return false
+    else
+        -- It's assumed that the caller will want to handle / print this error case
+        return false
     end
 
     -- TODO: Possible remove this

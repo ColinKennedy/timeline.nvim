@@ -18,7 +18,7 @@ local function _copy(array, seen)
 end
 
 
-local function has_value(table_, expected_value)
+function M.has_value(table_, expected_value)
     for index, value in ipairs(table_) do
         if value == expected_value then
             return true

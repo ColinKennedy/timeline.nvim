@@ -1,6 +1,7 @@
 local base = require("timeline._core.sources.base")
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
+local differ = require("timeline._core.actions.differ")
 local filer = require("timeline._core.vim_utilities.filer")
 local record_ = require("timeline._core.components.record")
 local tabler = require("timeline._core.vim_utilities.tabler")
@@ -85,23 +86,30 @@ local function _get_repository_path(path)
 end
 
 
-local function _open_as_diff()
-    local start_record, end_record = unpack(differ.get_records_to_diff())
+local function _open_as_diff_and_summary(records)
+    -- TODO: Add the summary
+    local start_record = records[1]
 
-    if start_record == nil or end_record == nil
+    local start_details = start_record:get_details()
+    local start_commit = start_details.git_commit
+
+    if start_commit == nil
     then
-        vim.api.nvim_err_writeln(
-            string.format('Buffer "%s" has no records. Cannot diff.', buffer)
-        )
-
-        return
+        vim.api.nvim_err_writeln("Cannot load diff. No data was found.")
     end
 
-    print("It's time to diff!")
-    print(records[1])
-    print(records[#records])
+    local end_record = records[#records]
+    local end_commit = nil
 
-    records[1].actions.diff_this(records[1], records[#records])
+    if start_record ~= end_record
+    then
+        end_commit = end_record:get_details().git_commit
+    end
+
+    local source_path = start_details.file_path
+    local repository = start_details.repository
+
+    differ.diff_records(source_path, repository, start_commit, end_commit)
 end
 
 
@@ -112,10 +120,12 @@ local function _collect(payload, icon)
     -- for _, repository in ipairs(configuration.repository_paths)
     for _, repository in ipairs({"/home/selecaotwo/.vim_custom_backups"})
     do
+        local repository_path = _get_repository_path(payload.path)
+
         for _, commit in ipairs(
             _get_latest_commits(
                 repository,
-                _get_repository_path(payload.path),
+                repository_path,
                 payload.offset,
                 payload.height + payload.offset
             ) or {}
@@ -129,14 +139,18 @@ local function _collect(payload, icon)
                 record_.Record:new(
                     {
                         actions=function()
-                            return { open = _open_as_diff }
+                            return { open = _open_as_diff_and_summary }
                         end,
                         datetime=function()
                             return _get_commit_datetime(commit, repository)
                         end,
                         -- TODO: Add this, later
                         details=function()
-                            return "Details, here"
+                            return {
+                                file_path = repository_path,
+                                git_commit = commit,
+                                repository = repository,
+                            }
                         end,
                         icon=function()
                             return icon
@@ -145,8 +159,12 @@ local function _collect(payload, icon)
                             return "File Save"
                         end,
                         -- source=self, -- TODO: Not sure if I'll need this
-                        record_type=constant.RecordTypes.file_save,
-                        source_type=constant.SourceTypes.git_commit,
+                        record_type=function()
+                            return constant.RecordTypes.file_save
+                        end,
+                        source_type=function()
+                            return constant.SourceTypes.git_commit
+                        end
                     }
                 )
             )
