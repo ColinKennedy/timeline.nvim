@@ -200,3 +200,4 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Ask Neovim maintainers how to make pop-ups show above multiple windows at once (floating)
 - Add virtual text for the date
 - Make the diff view better
+- Do profiling and figure out how to get the code to be faster
