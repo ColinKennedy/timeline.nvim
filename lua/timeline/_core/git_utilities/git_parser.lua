@@ -18,7 +18,7 @@ function M.get_commit_datetime(commit, repository)
         return nil
     end
 
-    stdout = tabler.filter("", stdout)
+    stdout = tabler.filter_item("", stdout)
 
     return stdout[1]
 end
@@ -43,7 +43,7 @@ function M.get_latest_changes(repository, path, start_index, end_index)
         return nil
     end
 
-    stdout = tabler.filter("", stdout)
+    stdout = tabler.filter_item("", stdout)
 
     return stdout
 end
@@ -69,7 +69,7 @@ function M.get_repository_root(path)
         return nil
     end
 
-    stdout = tabler.filter("", stdout)
+    stdout = tabler.filter_item("", stdout)
 
     return stdout[1]
 end

@@ -1,3 +1,8 @@
+--- Simple, meaningful variables to use internally in timeline.nvim.
+---
+--- @module 'timeline._core.constant'
+---
+
 local M = {}
 
 

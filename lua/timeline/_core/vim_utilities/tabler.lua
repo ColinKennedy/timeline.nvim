@@ -1,6 +1,17 @@
+--- Functions for working Lua tables.
+---
+--- @module 'timeline._core.vim_utilities.tabler'
+---
+
 local M = {}
 
+--- Deep-copy `array`, return a new table.
+---
 --- @source https://stackoverflow.com/a/26367080
+---
+--- @param array table The data to copy.
+--- @param seen table Existing values that may have already been seen.
+---
 local function _copy(array, seen)
     if type(array) ~= "table" then return array end
     if seen and seen[array] then return seen[array] end
@@ -18,8 +29,14 @@ local function _copy(array, seen)
 end
 
 
-function M.has_value(table_, expected_value)
-    for _, value in ipairs(table_) do
+--- Check if `expected_value` is in `array`.
+---
+--- @param array table A list-like structure of values to check within.
+--- @param expected_value object Something to find in `table`.
+--- @return boolean # If `expected_value` was found, return `true`.
+---
+function M.has_value(array, expected_value)
+    for _, value in ipairs(array) do
         if value == expected_value then
             return true
         end
@@ -29,11 +46,22 @@ function M.has_value(table_, expected_value)
 end
 
 
+--- Deep-copy `array`, return a new table.
+---
+--- @source https://stackoverflow.com/a/26367080
+---
+--- @param array table The data to copy.
+---
 function M.copy(array)
     return _copy(array)
 end
 
 
+--- Append all `items` to the end of `array`.
+---
+--- @param items object[] Values to add into `array`.
+--- @param array table A list-like structure of values to add into.
+---
 function M.extend(items, array)
     for _, item in ipairs(items)
     do
@@ -42,7 +70,13 @@ function M.extend(items, array)
 end
 
 
-function M.filter(item_to_filter, array)
+--- Make a copy of `array` without any of `item_to_filter`.
+---
+--- @param item_to_filter object Something to exclude from the returned array.
+--- @param array table A list-like structure of values to check within.
+--- @return table # The generated copy of `array`, without any of `item_to_filter`.
+---
+function M.filter_item(item_to_filter, array)
     local output = {}
 
     for _, item in ipairs(array)
@@ -57,12 +91,18 @@ function M.filter(item_to_filter, array)
 end
 
 
-function M.slice(table_, first, last, step)
+--- Get a subset of `array` as a new array.
+---
+--- @param array table A list-like structure of values to check within.
+--- @param first number? The first value to start looking within.
+--- @param last number? The last value to include in the returned result.
+--- @param step number? The increment of indices to consider for the subarray.
+function M.slice(array, first, last, step)
     local sliced = {}
 
-    for index = first or 1, last or #table_, step or 1
+    for index = first or 1, last or #array, step or 1
     do
-        sliced[#sliced + 1] = table_[index]
+        sliced[#sliced + 1] = array[index]
     end
 
     return sliced

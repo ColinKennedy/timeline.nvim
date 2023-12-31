@@ -1,6 +1,15 @@
+--- Functions related to Vim keymaps.
+---
+--- @module 'timeline._core.vim_utilities.keymap'
+---
+
 local M = {}
 
 
+--- Remove all mappings in `buffer`.
+---
+--- @param buffer number A 0-or-more value of the buffer to modify.
+---
 function M.unmap_all(buffer)
     local modes = {"n", "v", "x", "s", "o", "i", "l", "c", "t"}
 
