@@ -2,6 +2,16 @@ local terminal = require("timeline._core.vim_utilities.terminal")
 
 local M = {}
 
+
+local function _make_window(path, repository, commit, text)
+    -- This file name is a simple URI, since it's a snapshot in time and not a real file
+    vim.cmd(string.format("file git_commit:%s:%s:%s", path, repository, commit))
+    local buffer = 0
+    vim.api.nvim_buf_set_lines(buffer, 0, -1, false, text)
+    -- vim.api.nvim_buf_set_option(buffer, "modifiable", false)
+end
+
+
 function M.diff_records(path, repository, start_commit, end_commit)
     if end_commit == nil
     then
@@ -17,7 +27,6 @@ function M.diff_records(path, repository, start_commit, end_commit)
         )
     )
 
-    print(start_success)
     if not start_success
     then
         vim.api.nvim_err_writeln(
@@ -52,9 +61,12 @@ function M.diff_records(path, repository, start_commit, end_commit)
         return
     end
 
-    print("GOING INTO DIFF MODE")
-    print(vim.inspect(start_stdout))
-    print(vim.inspect(end_stdout))
+    vim.cmd.vnew()
+    _make_window(path, repository, start_commit, start_stdout)
+    vim.cmd.diffthis()  -- Mark the first window to diff from
+    vim.cmd.vnew()
+    _make_window(path, repository, end_commit, end_stdout)
+    vim.cmd.diffthis()  -- Mark this last window to diff to
 end
 
 
