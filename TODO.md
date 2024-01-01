@@ -215,6 +215,8 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Allow the timeline view to update as the user is working
 
 
+- Make the diff view splitright when there's no existing window to work off of
+
 ```json
 {
     "extras": "arbitrary-stuff-here",

@@ -52,11 +52,20 @@ end
 
 function M.get_notes(repository, commit)
     local command = "git notes show " .. commit
-    local success, stdout, stderr = unpack(terminal.run(command, { cwd=repository }))
+    local success, stdout, _ = unpack(terminal.run(command, { cwd=repository }))
 
     if success
     then
-        return vim.fn.json_decode(stdout[1])
+        local data
+        success, data = pcall(vim.fn.json_decode, stdout[1])
+
+        if not success
+        then
+            -- The `git notes` found a note but it wasn't JSON-friendly. Fail early
+            return nil
+        end
+
+        return data
     end
 
     if text_mate.starts_with(stdout[1], "error: no note found for ")
