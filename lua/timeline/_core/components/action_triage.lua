@@ -128,6 +128,7 @@ function M.run_restore_action(timeline_buffer, source_buffer)
 end
 
 
+-- TODO: Add docstring
 function M.run_open_action(timeline_buffer, source_buffer)
     local records = _get_selected_records(timeline_buffer)
 
@@ -199,6 +200,7 @@ function M.run_show_diff_action(timeline_buffer, source_buffer)
 end
 
 
+-- TODO: Add docstring
 function M.run_show_manifest_action(timeline_buffer, source_buffer)
     local start_record, end_record = unpack(_get_records_range(timeline_buffer))
 
