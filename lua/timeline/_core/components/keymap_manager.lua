@@ -13,7 +13,7 @@ local function _add_mappings(timeline_buffer, source_buffer, data, modes)
         vim.keymap.set(
             mode,
             data.key,
-            function(window)
+            function()
                 data.command(timeline_buffer, source_buffer)
             end,
             { buffer=timeline_buffer, desc=data.description }
