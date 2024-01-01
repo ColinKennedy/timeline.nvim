@@ -13,7 +13,7 @@ local M = {}
 M.Source = base.Source:new()
 
 
-local function _collect(payload, icon)
+local function _collect(payload)
     local output = {}
 
     -- TODO: Find a better way to implement a cache
@@ -55,6 +55,21 @@ local function _collect(payload, icon)
 
                 return cache[repository][commit]["datetime"]
             end
+
+            local notes = git_parser.get_notes(repository, commit)
+            local source_type = constant.SourceTypes.git_commit
+
+            local record_type = nil
+
+            if notes ~= nil
+            then
+                record_type = notes.record_type
+            else
+                -- Just assume that the commit is a normal file save, in this case
+                record_type = constant.RecordTypes.file_save
+            end
+
+            local icon = configuration.DATA.records[record_type].icon
 
             table.insert(
                 output,
@@ -140,10 +155,10 @@ local function _collect(payload, icon)
                         end,
                         -- source=self, -- TODO: Not sure if I'll need this
                         record_type=function()
-                            return constant.RecordTypes.file_save
+                            return record_type
                         end,
                         source_type=function()
-                            return constant.SourceTypes.git_commit
+                            return source_type
                         end
                     }
                 )
@@ -163,7 +178,7 @@ end
 function M.Source:collect(payload)
     local results = base.Source.collect(self, payload)
 
-    tabler.extend(_collect(payload, self:get_icon()), results)
+    tabler.extend(_collect(payload), results)
 
     return results
 end

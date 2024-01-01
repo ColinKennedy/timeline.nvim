@@ -17,7 +17,9 @@ local function _collect(payload, icon)
     local output = {}
 
     local repository_path = payload.path
-    local repository = git_parser.get_repository_root(repository_path)
+    local repository = git_parser.get_repository_root(
+        vim.fn.fnamemodify(repository_path, ":h")
+    )
 
     if repository == nil
     then
@@ -147,7 +149,7 @@ end
 function M.Source:collect(payload)
     local results = base.Source.collect(self, payload)
 
-    tabler.extend(_collect(payload, self:get_icon()), results)
+    tabler.extend(_collect(payload, configuration.DATA.records.git_commit.icon), results)
 
     return results
 end

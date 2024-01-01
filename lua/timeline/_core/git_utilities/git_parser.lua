@@ -1,6 +1,7 @@
 local filer = require("timeline._core.vim_utilities.filer")
 local tabler = require("timeline._core.vim_utilities.tabler")
 local terminal = require("timeline._core.vim_utilities.terminal")
+local text_mate = require("timeline._core.vim_utilities.text_mate")
 
 
 local M = {}
@@ -49,6 +50,30 @@ function M.get_latest_changes(repository, path, start_index, end_index)
 end
 
 
+function M.get_notes(repository, commit)
+    local command = "git notes show " .. commit
+    local success, stdout, stderr = unpack(terminal.run(command, { cwd=repository }))
+
+    if success
+    then
+        return vim.fn.json_decode(stdout[1])
+    end
+
+    if text_mate.starts_with(stdout[1], "error: no note found for ")
+    then
+        -- Git errors if no note is found. It's fine, just ignore it.
+        return nil
+    end
+
+    vim.api.nvim_err_writeln(
+        string.format('Command "%s" at "%s" failed to run.', command, repository)
+    )
+    vim.api.nvim_err_writeln(vim.inspect(stdout))
+
+    return nil
+end
+
+
 function M.get_repository_path(path)
     local stripped = filer.lstrip_path(path)
     local repository_relative_path = filer.join_path({vim.fn.hostname(), stripped})
@@ -59,7 +84,7 @@ end
 
 function M.get_repository_root(path)
     local command = "git rev-parse --show-toplevel"
-    local success, stdout, stderr = unpack(terminal.run(command, { cwd=repository }))
+    local success, stdout, stderr = unpack(terminal.run(command, { cwd=path }))
 
     if not success
     then

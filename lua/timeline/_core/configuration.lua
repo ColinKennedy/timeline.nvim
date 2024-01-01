@@ -65,10 +65,10 @@ M._DEFAULTS = {
     },
     backup_repository_path = _BACKUP_DIRECTORY,
     source_repository_paths = {_BACKUP_DIRECTORY},
-    sources = {
-        [constant.SourceTypes.file] = { icon = "" },
-        [constant.SourceTypes.git] = { icon = "󰜘" },
-        [constant.SourceTypes.restore] = { icon = "󰑏" },
+    records = {
+        [constant.RecordTypes.file_save] = { icon = "" },
+        [constant.RecordTypes.git_commit] = { icon = "󰜘" },
+        [constant.RecordTypes.restore] = { icon = "󰑏" },
     },
     timeline_window = {
         size = 20,

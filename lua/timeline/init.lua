@@ -40,11 +40,6 @@ local function _validate_data(data)
 end
 
 
-local function _setup_autocommands()
-    -- TODO: Finish this
-end
-
-
 --- Apply configuration options to timeline.nvim.
 ---
 --- @param data TimelineConfiguration The settings which control timeline.nvim.
@@ -75,7 +70,6 @@ end
 ---
 function M.setup(data)
     _setup_configuration(data)
-    _setup_autocommands()
     backup.setup(configuration.DATA.backup_repository_path)
 end
 

@@ -3,13 +3,11 @@ local M = {}
 local tabler = require("timeline._core.vim_utilities.tabler")
 local file = require("timeline._core.sources.file")
 local git = require("timeline._core.sources.git")
-local restore = require("timeline._core.sources.restore")
 
 -- TODO: Add more, here
 local _DEFAULTS = {
     file.Source,
     git.Source,
-    restore.Source,
 }
 local SOURCE_TYPES = tabler.copy(_DEFAULTS)
 local SOURCES = {}
