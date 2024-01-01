@@ -39,16 +39,22 @@ local function _collect(payload, icon)
         do
             cache[repository][commit] = {}
 
-            local get_datetime_number = function()
+            local get_datetime = function()
                 if cache[repository][commit]["datetime"] ~= nil
                 then
                     return cache[repository][commit]["datetime"]
                 end
 
-                cache[repository][commit]["datetime"] = git_parser.get_commit_datetime(
-                    commit,
-                    repository
-                )
+                local unix_epoch = git_parser.get_commit_datetime(commit, repository)
+
+                if unix_epoch == nil
+                then
+                    return nil
+                end
+
+                local datetime = luatz.timetable.new_from_timestamp(unix_epoch)
+
+                cache[repository][commit]["datetime"] = datetime
 
                 return cache[repository][commit]["datetime"]
             end
@@ -82,18 +88,21 @@ local function _collect(payload, icon)
                                 end,
                             }
                         end,
-                        datetime_number=get_datetime_number,
+                        datetime_number=function()
+                            return get_datetime():timestamp()
+                        end,
                         datetime_text=function()
-                            local datetime = get_datetime_number()
+                            -- TODO: Add caching
+                            local datetime = get_datetime()
 
                             if datetime == nil
                             then
                                 return "<No datetime found>"
                             end
 
-                            -- TODO: Add date time format text here
-                            return tostring(luatz.timetable.new_from_timestamp(tonumber(datetime)))
-                            -- strftime("%Y-%m-%d     %H:%M:%S %z")
+                            return datetime:strftime(
+                                configuration.DATA.timeline_window.datetime.format
+                            )
                         end,
                         -- TODO: Add this, later
                         details=function()

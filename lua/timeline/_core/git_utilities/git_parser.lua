@@ -20,7 +20,7 @@ function M.get_commit_datetime(commit, repository)
 
     stdout = tabler.filter_item("", stdout)
 
-    return stdout[1]
+    return tonumber(stdout[1])
 end
 
 
