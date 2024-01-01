@@ -209,3 +209,11 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Reduce the amount of closures used in the codebase
 - Docstrings: How do you represent "anything" in Lua docstrings? object doesn't work
 - Color-code the icons and record types
+- Add a raw git diff option like with this
+    - https://asciinema.org/a/397390
+    - https://github.com/afnanenayet/diffsitter
+
+- Update all functions that assume that it's running in the current buffer / window to not do that
+    - e.g. all of action_triage.lua
+
+- Add datetime options

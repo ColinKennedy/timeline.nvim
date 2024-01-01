@@ -91,7 +91,9 @@ local function _collect(payload, icon)
                                 return "<No datetime found>"
                             end
 
-                            return luatz.timetable.new_from_timestamp(tonumber(datetime))
+                            -- TODO: Add date time format text here
+                            return tostring(luatz.timetable.new_from_timestamp(tonumber(datetime)))
+                            -- strftime("%Y-%m-%d     %H:%M:%S %z")
                         end,
                         -- TODO: Add this, later
                         details=function()

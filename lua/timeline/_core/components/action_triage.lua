@@ -1,25 +1,7 @@
-local constant = require("timeline._core.constant")
 local tabler = require("timeline._core.vim_utilities.tabler")
+local record_ = require("timeline._core.components.record")
 
 local M = {}
-
-
--- TODO: Remove this function?
-local function _find_next_record_of_same_type(records, start_index)
-    -- TODO: is this for-loop inclusive on the end? Check
-    local record = records[start_index]
-    local expected = record:get_record_type()
-
-    for index = start_line + 1, #records
-    do
-        if records[index]:get_record_type() == expected
-        then
-            return index
-        end
-    end
-
-    return nil
-end
 
 
 local function _get_record_types(records)
@@ -88,33 +70,13 @@ end
 
 
 local function _get_selected_records(buffer)
-    local start_line = vim.fn.getpos("v")[2]
-    local end_line = vim.fn.getpos(".")[2]
-
-    local success, records = pcall(
-        vim.api.nvim_buf_get_var,
-        buffer,
-        constant.BUFFER_RECORDS_VARIABLE
-    )
-
-    if not success
-    then
-        return nil
-    end
+    local records = record_.get_selected_records(buffer)
 
     if records == nil
     then
         return nil
     end
 
-    -- TODO: Remove later
-    -- if start_line == end_line
-    -- then
-    --     end_line = _find_next_record_of_same_type(records, start_line)
-    -- end
-
-    -- TODO: Make sure that this is inclusive
-    records = tabler.slice(records, start_line, end_line)
     local record_types = _get_record_types(records)
 
     if #record_types > 1

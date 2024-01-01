@@ -1,4 +1,8 @@
+local constant = require("timeline._core.constant")
+local tabler = require("timeline._core.vim_utilities.tabler")
+
 local M = {}
+
 
 M.Record = {}
 
@@ -19,6 +23,31 @@ function M.Record:new(data)
     self.get_source_type = data.source_type
 
     return self
+end
+
+
+function M.get_selected_records(buffer)
+    local start_line = vim.fn.getpos("v")[2]
+    local end_line = vim.fn.getpos(".")[2]
+
+    local success, records = pcall(
+        vim.api.nvim_buf_get_var,
+        buffer,
+        constant.BUFFER_RECORDS_VARIABLE
+    )
+
+    if not success
+    then
+        return nil
+    end
+
+    if records == nil
+    then
+        return nil
+    end
+
+    -- TODO: Make sure that this is inclusive
+    return tabler.slice(records, start_line, end_line)
 end
 
 
