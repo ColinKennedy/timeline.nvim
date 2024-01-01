@@ -13,7 +13,8 @@ local M = {}
 --- Open a diff between two commits.
 ---
 --- @param path string
----     A git-tracked file path to gather a diff for.
+---     A git-tracked file path to gather a diff for. This path *must* be
+---     a relative path to `root`.
 --- @param repository string
 ---     The root of a git repository to search within for commits.
 --- @param start_commit string

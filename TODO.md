@@ -187,14 +187,11 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Add FZF / Telescope integration when asking for a single record type.
   Otherwise, use Vim's built-in input function
 - Make sure the Lua files and everything seem natural
-- Remove old print calls
 - Figure out how to clean up the output of terminal.run
 - Ask Neovim maintainers how to make pop-ups show above multiple windows at once (floating)
 - Make the diff view better
     - You should be able to open, close, and reopen a diff
-- Do profiling and figure out how to get the code to be faster
 - Make the differ better. As diffoff should remove everything and not keep any buffers
-- Git commit diff isn't working
 - Wasn't there a new diff algorithm for Neovim? Try that
     - https://www.reddit.com/r/neovim/comments/stcml3/patience_diff_algorithm/
     - https://github.com/neovim/neovim/pull/14537
@@ -216,16 +213,24 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Move all uses of configuration.DATA to a variable that gets passed around to various functions, instead
 
 - Maybe file.lua and git.lua can be combined
+    - At least combine the caches into one
 - Maybe it'd be better to make a diff in a separate tab? idk
 
 - Allow people to toggle / filter / show record types in an existing timeline view without having to recompute everything all over again
 - Make sure "restore" works as expected
+
+- Speed
+    - Do profiling and figure out how to get the code to be faster
+    - Git commit diff is slow. Fix
 
 refresh = {
     key = "r",
     command = action_triage.run_refresh_action,
     description = "[r]efresh the Timeline View buffer.",
 },
+- force refresh (clear all caches and refresh)
+    - key = "R"
+
 
 ```json
 {

@@ -1,4 +1,7 @@
+local Path = require("plenary.path")
+
 local base = require("timeline._core.sources.base")
+local cache = require("timeline._core.components.cache")
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
 local date_mate = require("timeline._core.git_utilities.date_mate")
@@ -10,19 +13,17 @@ local tabler = require("timeline._core.vim_utilities.tabler")
 
 local M = {}
 
--- TODO: Find a better way to implement a cache
-local _CACHE = {}
-
 M.Source = base.Source:new()
 
 
 local function _collect(payload, icon)
     local output = {}
 
-    local repository_path = payload.path
+    local absolute_repository_path = payload.path
     local repository = git_parser.get_repository_root(
-        vim.fn.fnamemodify(repository_path, ":h")
+        vim.fn.fnamemodify(absolute_repository_path, ":h")
     )
+    local repository_path = Path:new(payload.path):make_relative(repository)
 
     if repository == nil
     then
@@ -30,9 +31,10 @@ local function _collect(payload, icon)
         return {}
     end
 
-    if _CACHE[repository] == nil
+    -- TODO: Figure out how to cache things more simply
+    if cache.GIT_COMMIT_CACHE[repository] == nil
     then
-        _CACHE[repository] = {}
+        cache.GIT_COMMIT_CACHE[repository] = {}
     end
 
     for _, commit in ipairs(
@@ -44,15 +46,15 @@ local function _collect(payload, icon)
         ) or {}
     )
     do
-        if _CACHE[repository][commit] == nil
+        if cache.GIT_COMMIT_CACHE[repository][commit] == nil
         then
-            _CACHE[repository][commit] = {}
+            cache.GIT_COMMIT_CACHE[repository][commit] = {}
         end
 
         local get_datetime = function()
-            if _CACHE[repository][commit]["datetime"] ~= nil
+            if cache.GIT_COMMIT_CACHE[repository][commit]["datetime"] ~= nil
             then
-                return _CACHE[repository][commit]["datetime"]
+                return cache.GIT_COMMIT_CACHE[repository][commit]["datetime"]
             end
 
             local unix_epoch = git_parser.get_commit_datetime(commit, repository)
@@ -64,9 +66,9 @@ local function _collect(payload, icon)
 
             local datetime = date_mate.get_datetime_with_timezone(unix_epoch)
 
-            _CACHE[repository][commit]["datetime"] = datetime
+            cache.GIT_COMMIT_CACHE[repository][commit]["datetime"] = datetime
 
-            return _CACHE[repository][commit]["datetime"]
+            return cache.GIT_COMMIT_CACHE[repository][commit]["datetime"]
         end
 
         table.insert(
@@ -86,10 +88,7 @@ local function _collect(payload, icon)
                                     window = nil
                                 end
 
-                                differ.open_diff_records_and_summary(
-                                    records,
-                                    payload.source_window
-                                )
+                                differ.open_diff_records_and_summary(records, window)
                             end,
                             show_diff = function(records)
                                 local window = payload.source_window
