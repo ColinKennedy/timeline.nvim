@@ -2,6 +2,7 @@ local M = {}
 
 M.Record = {}
 
+--- @class Record An individual entry to display in the Timeline Viewer.
 
 function M.Record:new(data)
     local self = {}

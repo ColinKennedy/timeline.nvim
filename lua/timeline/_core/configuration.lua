@@ -21,7 +21,7 @@ local M = {}
 --- @field sources table<string, SourceConfiguration>
 ---     Customization options for each specific source type.
 --- @field timeline_window table<string, integer>
----     This controls how the Timeline Viewer opens / displays.
+---     This controls how the Timeline View opens / displays.
 
 --- @class KeymapPrototype
 --- @field key string
@@ -34,7 +34,7 @@ local M = {}
 
 --- @class SourceConfiguration
 --- @field icon string?
----     An optional prefix to add to any Record that the Timeline Viewer displays.
+---     An optional prefix to add to any Record that the Timeline View displays.
 
 M._DEFAULTS = {
     mappings = {

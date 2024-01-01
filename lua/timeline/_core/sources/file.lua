@@ -70,7 +70,16 @@ local function _collect(payload, icon)
                                     end
 
                                     differ.open_diff_records_and_summary(records, window)
-                                end
+                                end,
+                                show_diff = function(records)
+                                    local window = payload.source_window
+                                    if not vim.api.nvim_win_is_valid(window)
+                                    then
+                                        window = nil
+                                    end
+
+                                    differ.open_diff_records(records, window)
+                                end,
                             }
                         end,
                         datetime_number=get_datetime_number,

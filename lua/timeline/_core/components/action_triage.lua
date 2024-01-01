@@ -69,8 +69,6 @@ local function _ask_for_record_type(record_types)
             return types[lowered]
         end
     end
-
-    return nil
 end
 
 
@@ -121,7 +119,7 @@ local function _get_selected_records(buffer)
 
     if #record_types > 1
     then
-        record_type = _ask_for_record_type(record_types)
+        local record_type = _ask_for_record_type(record_types)
         records = _filter_records_by_type(record_type, records)
     end
 
@@ -129,7 +127,7 @@ local function _get_selected_records(buffer)
 end
 
 
-function _get_records_range(buffer)
+local function _get_records_range(buffer)
     local records = _get_selected_records(buffer)
 
     if records == nil
@@ -164,8 +162,7 @@ function M.run_restore_action(timeline_buffer, source_buffer)
         return
     end
 
-    local record = records[1]
-    record.actions.restore(record)
+    start_record.actions.restore(start_record)
 end
 
 
@@ -183,7 +180,8 @@ function M.run_open_action(timeline_buffer, source_buffer)
         return
     end
 
-    local caller = records[1]:get_actions().open
+    local record = records[1]
+    local caller = record:get_actions().open
 
     if caller == nil
     then
@@ -219,8 +217,44 @@ function M.run_show_manifest_action(timeline_buffer, source_buffer)
 end
 
 
+--- Run 'diffthis' on the currently-selected Record objects from `timeline_buffer`.
+---
+--- Important:
+---     This function assumes that the cursor is currently in the Timeline View's window.
+---     TODO: It'd be nice to remove this restriction.
+---
+--- @param timeline_buffer number
+---     A 0-or-more ID pointing to the Timeline View.
+--- @param source_buffer number
+---     A 0-or-more ID pointing to a paired buffer.
+---
 function M.run_show_diff_action(timeline_buffer, source_buffer)
-    print("doing diff!")
+    local records = _get_selected_records(timeline_buffer)
+
+    if records == nil
+    then
+        local name = vim.fn.bufname(source_buffer) or source_buffer
+
+        vim.api.nvim_err_writeln(
+            string.format('Buffer "%s" has no records. Cannot diff.', name)
+        )
+
+        return
+    end
+
+    local record = records[1]
+    local caller = record:get_actions().show_diff
+
+    if caller == nil
+    then
+        vim.api.nvim_err_writeln(
+            string.format('Record "%s" has no diff action.', vim.inspect(record))
+        )
+
+        return
+    end
+
+    caller(records)
 end
 
 
