@@ -14,10 +14,12 @@ local M = {}
 --- @class TimelineConfiguration
 --- @field mappings table<string, KeymapPrototype>
 ---     Psuedo-keys to run in the Timeline buffer.
---- @field repository_paths string[]
+--- @field backup_repository_path string
+---     The folder on-disk that is used to make new commits.
+--- @field source_repository_paths string[]
 ---     Absolute paths on-disk used to look for backup locations.
----     Normally this list is just a single backup directory but if you need
----     multiple directories, you specify them here.
+---     Normally this is just `backup_repository_path` but if you have
+---     a special setup that requires multiple backup directories, you can.
 --- @field sources table<string, SourceConfiguration>
 ---     Customization options for each specific source type.
 --- @field timeline_window table<string, integer>
@@ -35,6 +37,8 @@ local M = {}
 --- @class SourceConfiguration
 --- @field icon string?
 ---     An optional prefix to add to any Record that the Timeline View displays.
+
+local _BACKUP_DIRECTORY = vim.fn.expand("~/.vim_custom_backups")
 
 M._DEFAULTS = {
     mappings = {
