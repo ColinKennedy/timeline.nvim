@@ -11,6 +11,7 @@ local M = {}
 ---
 --- @param array table The data to copy.
 --- @param seen table Existing values that may have already been seen.
+--- @return table # The copied `array`.
 ---
 local function _copy(array, seen)
     if type(array) ~= "table" then return array end
@@ -51,6 +52,7 @@ end
 --- @source https://stackoverflow.com/a/26367080
 ---
 --- @param array table The data to copy.
+--- @return table # The copied `array`.
 ---
 function M.copy(array)
     return _copy(array)
@@ -97,6 +99,8 @@ end
 --- @param first number? The first value to start looking within.
 --- @param last number? The last value to include in the returned result.
 --- @param step number? The increment of indices to consider for the subarray.
+--- @return table # A subarray copy of `array`.
+---
 function M.slice(array, first, last, step)
     local sliced = {}
 

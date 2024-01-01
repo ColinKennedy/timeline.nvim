@@ -207,3 +207,4 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
     - https://www.reddit.com/r/neovim/comments/stcml3/patience_diff_algorithm/
     - https://github.com/neovim/neovim/pull/14537
 - Reduce the amount of closures used in the codebase
+- Docstrings: How do you represent "anything" in Lua docstrings? object doesn't work

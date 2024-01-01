@@ -1,10 +1,12 @@
+--- Diff / Compare timeline.nvim's Record objects.
+---
+--- @module 'timeline._core.actions.differ'
+---
+
 local terminal = require("timeline._core.vim_utilities.terminal")
 
 local M = {}
 
-local _TIMELINE_DIFF_GROUP = vim.api.nvim_create_augroup(
-    "TimelineDifferAutoGroup", { clear = true }
-)
 
 local function _make_window(path, repository, commit, text)
     -- This file name is a simple URI, since it's a snapshot in time and not a real file

@@ -1,7 +1,16 @@
+--- Functions for working running CLI / terminal commands.
+---
+--- @module 'timeline._core.vim_utilities.terminal'
+---
+
 local tabler = require("timeline._core.vim_utilities.tabler")
 
 local M = {}
 
+
+--- @class _ShellArguments
+--- @field cwd string? The directory on-disk where a shell command will be called from.
+--- @field on_stderr fun(job_id: integer, data: table<string>, event): nil An on-error callback.
 
 --- Run `command` with shell `options` and indicate if the call succeeded.
 ---
@@ -42,12 +51,19 @@ local _run_shell_command = function(command, options)
         -- It's assumed that the caller will want to handle / print this error case
         return false
     end
-
-    -- TODO: Possible remove this
-    return true
 end
 
 
+--- Run `command` in a separate shell and return its results.
+---
+--- @param command string
+---     Some CLI/terminal command. e.g. `"ls"`.
+--- @param options table<string, object>
+---     Options to include for the command. e.g. `{cwd="/path/to/somewhere"}`.kj
+--- @return table<boolean, string[], string[]>
+---     The boolean means "did this command exit with a 0 return code".
+---     The arrays of strings are stdout and stderr.
+---
 function M.run(command, options)
     options = options or {}
     local stderr = {}
