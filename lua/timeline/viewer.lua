@@ -69,8 +69,6 @@ local function _add_datetime_virtual_text(buffer, namespace)
 
     local line = vim.fn.line(".") - 1  -- Vim line is 1-or-more but we need 0-or-more
 
-    local end_column = 0
-    local end_line = line + (#records - 1)
     local start_column = 0
     local start_line = line
     local text_to_display = {}
