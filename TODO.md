@@ -215,6 +215,8 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Make the diff view splitright when there's no existing window to work off of
 - Move all uses of configuration.DATA to a variable that gets passed around to various functions, instead
 
+- Maybe file.lua and git.lua can be combined
+
 - Allow people to toggle / filter / show record types in an existing timeline view without having to recompute everything all over again
 - Make sure "restore" works as expected
 

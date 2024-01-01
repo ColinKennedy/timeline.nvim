@@ -10,6 +10,9 @@ local tabler = require("timeline._core.vim_utilities.tabler")
 
 local M = {}
 
+-- TODO: Find a better way to implement a cache
+local _CACHE = {}
+
 M.Source = base.Source:new()
 
 
@@ -27,8 +30,10 @@ local function _collect(payload, icon)
         return {}
     end
 
-    -- TODO: Find a better way to implement a cache
-    local cache = {}
+    if _CACHE[repository] == nil
+    then
+        _CACHE[repository] = {}
+    end
 
     for _, commit in ipairs(
         git_parser.get_latest_changes(
@@ -39,12 +44,15 @@ local function _collect(payload, icon)
         ) or {}
     )
     do
-        cache[commit] = {}
+        if _CACHE[repository][commit] == nil
+        then
+            _CACHE[repository][commit] = {}
+        end
 
         local get_datetime = function()
-            if cache[commit]["datetime"] ~= nil
+            if _CACHE[repository][commit]["datetime"] ~= nil
             then
-                return cache[commit]["datetime"]
+                return _CACHE[repository][commit]["datetime"]
             end
 
             local unix_epoch = git_parser.get_commit_datetime(commit, repository)
@@ -56,9 +64,9 @@ local function _collect(payload, icon)
 
             local datetime = date_mate.get_datetime_with_timezone(unix_epoch)
 
-            cache[commit]["datetime"] = datetime
+            _CACHE[repository][commit]["datetime"] = datetime
 
-            return cache[commit]["datetime"]
+            return _CACHE[repository][commit]["datetime"]
         end
 
         table.insert(

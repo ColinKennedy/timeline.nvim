@@ -13,6 +13,9 @@ local M = {}
 
 M.Source = base.Source:new()
 
+-- TODO: Find a better way to implement a cache
+local _CACHE = {}
+
 
 local function _get_label_from_type(record_type)
     local labels = {
@@ -27,12 +30,12 @@ end
 local function _collect(payload)
     local output = {}
 
-    -- TODO: Find a better way to implement a cache
-    local cache = {}
-
     for _, repository in ipairs(configuration.DATA.source_repository_paths)
     do
-        cache[repository] = {}
+        if _CACHE[repository] == nil
+        then
+            _CACHE[repository] = {}
+        end
 
         local repository_path = git_parser.get_repository_path(payload.path)
 
@@ -45,12 +48,15 @@ local function _collect(payload)
             ) or {}
         )
         do
-            cache[repository][commit] = {}
+            if _CACHE[repository][commit] == nil
+            then
+                _CACHE[repository][commit] = {}
+            end
 
             local get_datetime = function()
-                if cache[repository][commit]["datetime"] ~= nil
+                if _CACHE[repository][commit]["datetime"] ~= nil
                 then
-                    return cache[repository][commit]["datetime"]
+                    return _CACHE[repository][commit]["datetime"]
                 end
 
                 local unix_epoch = git_parser.get_commit_datetime(commit, repository)
@@ -62,14 +68,22 @@ local function _collect(payload)
 
                 local datetime = date_mate.get_datetime_with_timezone(unix_epoch)
 
-                cache[repository][commit]["datetime"] = datetime
+                _CACHE[repository][commit]["datetime"] = datetime
 
-                return cache[repository][commit]["datetime"]
+                return _CACHE[repository][commit]["datetime"]
             end
 
-            local notes = git_parser.get_notes(repository, commit)
-            local source_type = constant.SourceTypes.git_commit
+            local is_computed = _CACHE[repository][commit]["is_notes_computed"]
+            local notes = _CACHE[repository][commit]["notes"]
 
+            if not is_computed
+            then
+                notes = git_parser.get_notes(repository, commit)
+                _CACHE[repository][commit]["notes"] = notes
+                _CACHE[repository][commit]["is_notes_computed"] = true
+            end
+
+            local source_type = constant.SourceTypes.git_commit
             local record_type = nil
 
             if notes ~= nil
