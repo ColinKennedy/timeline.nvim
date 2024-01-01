@@ -15,7 +15,7 @@ local M = {}
 --- @return boolean # If the data is valid, return `true`. Otherwise fail with a message.
 ---
 local function _validate_data(data)
-    paths = data.repository_paths
+    local paths = data.repository_paths
 
     if vim.tbl_isempty(paths)
     then

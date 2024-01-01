@@ -1,8 +1,7 @@
-local luatz = require("timeline._vendors.luatz")
-
 local base = require("timeline._core.sources.base")
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
+local date_mate = require("timeline._core.git_utilities.date_mate")
 local differ = require("timeline._core.actions.differ")
 local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
@@ -52,7 +51,7 @@ local function _collect(payload, icon)
                     return nil
                 end
 
-                local datetime = luatz.timetable.new_from_timestamp(unix_epoch)
+                local datetime = date_mate.get_datetime_with_timezone(unix_epoch)
 
                 cache[repository][commit]["datetime"] = datetime
 

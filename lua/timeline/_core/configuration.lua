@@ -68,7 +68,8 @@ M._DEFAULTS = {
         size = 20,
         -- TODO: Add timezone conversion support
         datetime = {
-            format = "%Y-%m-%d %H:%M:%S %z",
+            format = "%Y-%m-%d %H:%M:%S",
+            -- timezone = "America/Los_Angeles",
         }
         -- TODO: Add window defaults (width [percentage, fixed width, etc])
         -- size = "%20",
