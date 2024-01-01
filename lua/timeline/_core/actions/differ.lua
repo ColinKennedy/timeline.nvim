@@ -3,51 +3,11 @@
 --- @module 'timeline._core.actions.differ'
 ---
 
+local git_buffer = require("timeline._core.git_utilities.git_buffer")
+local git_parser = require("timeline._core.git_utilities.git_parser")
 local terminal = require("timeline._core.vim_utilities.terminal")
 
 local M = {}
-
-
-local _TIMELINE_DIFF_GROUP = vim.api.nvim_create_augroup(
-    "TimelineDifferAutoGroup", { clear = true }
-)
-
-
---- Load a `path` at `repository`'s `commit` into a new window.
----
---- Important:
----     The current buffer's contents will be replaced by this function.
----
---- @param path string A file path in the git repository to load into a window.
---- @param repository string The root directory to some git repository.
---- @param commit string A git repository commit ID to load `path` from.
---- @param text string[] The text to populate the buffer.
----
-local function _make_window(path, repository, commit, text)
-    -- This file name is a simple URI, since it's a snapshot in time and not a real file
-    vim.cmd(string.format("file git_commit:%s:%s:%s", path, repository, commit))
-
-    local buffer = vim.fn.bufnr()
-    vim.api.nvim_buf_set_lines(buffer, 0, -1, false, text)
-    local window = vim.fn.win_getid()
-
-    -- When the window is closed, close the buffer so that it can be used again, if needed
-    vim.api.nvim_create_autocmd(
-        "WinClosed",
-        {
-            group = _TIMELINE_DIFF_GROUP,
-            callback = function()
-                if not vim.api.nvim_win_is_valid(window)
-                then
-                    return
-                end
-
-                vim.cmd("bdelete! " .. buffer)
-            end,
-            buffer = buffer,
-        }
-    )
-end
 
 
 --- Open a diff between two commits.
@@ -77,43 +37,17 @@ local function _open_diff_commits(
         end_commit = start_commit .. "~"
     end
 
-    local template = "git show %s:%s"
-    local start_command = string.format(template, start_commit, path)
-    local start_success, start_stdout, _ = unpack(
-        terminal.run(start_command, { cwd=repository })
-    )
+    local start_stdout = git_parser.get_commit_text(path, repository, start_commit)
 
-    if not start_success
+    if start_stdout == nil
     then
-        vim.api.nvim_err_writeln(
-            string.format(
-                'Start-commit command "%s" at directory "%s" failed to run with "%s".',
-                start_command,
-                repository,
-                table.concat(start_stdout, "\n")
-            )
-        )
-
         return
     end
 
-    local end_command = string.format(template, end_commit, path)
-    local end_success, end_stdout, _ = unpack(
-        terminal.run(end_command, { cwd=repository })
-    )
+    local end_stdout = git_parser.get_commit_text(path, repository, end_commit)
 
-    if not end_success
+    if end_stdout == nil
     then
-        vim.api.nvim_err_writeln(
-            string.format(
-                'End-commit command "%s" at directory "%s" failed to run with "%s".',
-                end_command,
-                repository,
-                table.concat(end_stdout, "\n")
-            )
-        )
-
-
         return
     end
 
@@ -125,10 +59,10 @@ local function _open_diff_commits(
         vim.cmd.vnew()
     end
 
-    _make_window(path, repository, start_commit, start_stdout)
+    git_buffer.make_read_only_view(path, repository, start_commit, start_stdout)
     vim.cmd.diffthis()  -- Mark the first window to diff from
     vim.cmd.vnew()
-    _make_window(path, repository, end_commit, end_stdout)
+    git_buffer.make_read_only_view(path, repository, end_commit, end_stdout)
     vim.cmd.diffthis()  -- Mark this last window to diff to
 end
 

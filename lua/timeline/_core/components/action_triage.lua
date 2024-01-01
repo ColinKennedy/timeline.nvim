@@ -222,4 +222,32 @@ function M.run_show_manifest_action(timeline_buffer, source_buffer)
 end
 
 
+-- TODO: Add docstring
+function M.run_view_this_action(timeline_buffer, source_buffer)
+    local start_record, end_record = unpack(_get_records_range(timeline_buffer))
+
+    if start_record == nil or end_record == nil
+    then
+        local name = vim.fn.bufname(source_buffer) or source_buffer
+
+        vim.api.nvim_err_writeln(
+            string.format('Buffer "%s" has no records. Cannot diff.', name)
+        )
+
+        return
+    end
+
+    if start_record ~= end_record
+    then
+        vim.api.nvim_err_writeln(
+            string.format("Please select only one record at a time to restore.")
+        )
+
+        return
+    end
+
+    start_record:get_actions().view_this(start_record)
+end
+
+
 return M

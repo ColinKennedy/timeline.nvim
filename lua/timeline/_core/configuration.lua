@@ -43,29 +43,34 @@ local _BACKUP_DIRECTORY = vim.fn.expand("~/.vim_custom_backups")
 M._DEFAULTS = {
     mappings = {
         open = {
-            key = "o",
+            key = "<leader>o",
             command = action_triage.run_open_action,
             description = "Run the default-[o]pen for 1+ records, if allowed.",
         },
         refresh = {
-            key = "r",
+            key = "<leader>r",
             command = action_triage.run_refresh_action,
             description = "[r]efresh the Timeline View buffer.",
         },
         restore = {
-            key = "u",
+            key = "<leader>u",
             command = action_triage.run_restore_action,
             description = "[u]ndo / restore to the current record.",
         },
         show_diff = {
-            key = "d",
+            key = "<leader>d",
             command = action_triage.run_show_diff_action,
             description = "Create a [d]iff of the 1+ records, if allowed.",
         },
         show_manifest = {
-            key = "m",
+            key = "<leader>m",
             command = action_triage.run_show_manifest_action,
             description = "Show [m]anifest for 1+ records, if allowed. e.g. show its internal/debug details.",
+        },
+        view_this = {
+            key = "<leader>v",
+            command = action_triage.run_view_this_action,
+            description = "[v]iew the Record as a file (if able).",
         },
     },
     backup_repository_path = _BACKUP_DIRECTORY,

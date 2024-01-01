@@ -3,6 +3,7 @@ local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
 local date_mate = require("timeline._core.git_utilities.date_mate")
 local differ = require("timeline._core.actions.differ")
+local git_buffer = require("timeline._core.git_utilities.git_buffer")
 local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
 local tabler = require("timeline._core.vim_utilities.tabler")
@@ -152,6 +153,30 @@ local function _collect(payload)
                                         end
 
                                         differ.open_diff_records(records, window)
+                                    end,
+                                    view_this = function(record)
+                                        local window = payload.source_window
+
+                                        if not vim.api.nvim_win_is_valid(window)
+                                        then
+                                            window = nil
+                                        end
+
+                                        local text = git_parser.get_commit_text(
+                                            repository_path,
+                                            repository,
+                                            commit
+                                        )
+
+                                        vim.api.nvim_set_current_win(window)
+                                        vim.cmd.enew()
+
+                                        git_buffer.make_read_only_view(
+                                            repository_path,
+                                            repository,
+                                            commit,
+                                            text
+                                        )
                                     end,
                                 }
                             end,

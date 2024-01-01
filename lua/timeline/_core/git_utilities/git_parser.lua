@@ -25,6 +25,31 @@ function M.get_commit_datetime(commit, repository)
 end
 
 
+function M.get_commit_text(path, repository, commit)
+    local template = "git show %s:%s"
+    local command = string.format(template, commit, path)
+    local success, stdout, _ = unpack(
+        terminal.run(command, { cwd=repository })
+    )
+
+    if success
+    then
+        return stdout
+    end
+
+    vim.api.nvim_err_writeln(
+        string.format(
+            'Commit command "%s" at directory "%s" failed to run with "%s".',
+            command,
+            repository,
+            vim.inspect(stdout)
+        )
+    )
+
+    return nil
+end
+
+
 function M.get_latest_changes(repository, path, start_index, end_index)
     -- Reference: https://www.reddit.com/r/git/comments/18u7e7s/comment/kfjb9fl/?utm_source=share&utm_medium=web2x&context=3
     local command = string.format(
@@ -67,6 +92,8 @@ function M.get_notes(repository, commit)
 
         return data
     end
+
+    stdout = tabler.filter_item("", stdout)
 
     if text_mate.starts_with(stdout[1], "error: no note found for ")
     then
