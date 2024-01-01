@@ -168,14 +168,10 @@ TODO add screenshot
 
 - Open (diff / summary)
     - Allows visual selection
-- Open diff
-    - Allows visual selection
 - Open summary
     - Allows visual selection
 - Show details
     - Allows visual selection
-- Restore to this point
-    - Single selection only
 
 
 ## Developing
