@@ -6,6 +6,7 @@ local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
 local date_mate = require("timeline._core.git_utilities.date_mate")
 local differ = require("timeline._core.actions.differ")
+local filer = require("timeline._core.vim_utilities.filer")
 local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
 local tabler = require("timeline._core.vim_utilities.tabler")
@@ -23,7 +24,7 @@ local function _collect(payload, icon)
     local repository = git_parser.get_repository_root(
         vim.fn.fnamemodify(absolute_repository_path, ":h")
     )
-    local repository_path = Path:new(payload.path):make_relative(repository)
+    local repository_path = filer.get_relative_path(repository, payload.path)
 
     if repository == nil
     then

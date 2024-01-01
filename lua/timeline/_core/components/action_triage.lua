@@ -1,9 +1,26 @@
+--- The module that finds and executes any selected Record objects.
+---
+--- "Selected" means different things in different Vim modes...
+--- - Normal mode: The current line in the Timeline View window. It's always 1 line.
+--- - Visual mode: The selection in the Timeline View window. Could be 2+ lines.
+---
+--- Some Action objects require a single selection and others require multiple.
+--- The Action must error if the selection is invalid and exit early.
+---
+--- @module 'timeline._core.components.action_triage'
+---
+
 local tabler = require("timeline._core.vim_utilities.tabler")
 local record_ = require("timeline._core.components.record")
 
 local M = {}
 
 
+--- Get the Record data types from `records`.
+---
+--- @param records Records[] Parsed entries to return values for.
+--- @return string[] # The unique, found Record types.
+---
 local function _get_record_types(records)
     local types = {}
 
@@ -20,6 +37,13 @@ local function _get_record_types(records)
 end
 
 
+--- Ask the user to select one Record type.
+---
+--- This is useful when you must operate on one Record type at a time.
+---
+--- @param record_types string[] The unique, Record types used as input.
+--- @return string # The selected Record type.
+---
 local function _ask_for_record_type(record_types)
     -- TODO: Change this function to allow for minimal typing, like how Vim does it
     local lines = {}
@@ -36,6 +60,7 @@ local function _ask_for_record_type(record_types)
 
     while true
     do
+        -- TODO: Add FZF / telescope support here, for input
         local result = vim.fn.input(
             string.format(
                 "Multiple record types detected."
@@ -54,6 +79,12 @@ local function _ask_for_record_type(record_types)
 end
 
 
+--- Get a new array of just a single Record type.
+---
+--- @param record_type string A unique Record to filter `records` by.
+--- @param records Record[] The entries that we assume has 2+ unique types to filter by.
+--- @return Record[] # The filtered entries with all types but `record_type` omitted.
+---
 local function _filter_records_by_type(record_type, records)
     local output = {}
 
@@ -69,6 +100,14 @@ local function _filter_records_by_type(record_type, records)
 end
 
 
+-- TODO: Make this function work using window IDs, instead. Currently it
+-- assumes that the selection is in the current window.
+--
+--- Get the current selection of a single type of Record objects, from `buffer`.
+---
+--- @param buffer number A 0-or-more ID indicating the buffer to query.
+--- @return Record[]? # All entries of a specific Record type.
+---
 local function _get_selected_records(buffer)
     local records = record_.get_selected_records(buffer)
 
@@ -89,6 +128,11 @@ local function _get_selected_records(buffer)
 end
 
 
+--- Find the selected start / end Record objects of `buffer`.
+---
+--- @param buffer number A 0-or-more ID indicating the buffer to query.
+--- @return RecordRange # The two entries to consider for operations.
+---
 local function _get_records_range(buffer)
     local records = _get_selected_records(buffer)
 
@@ -101,6 +145,17 @@ local function _get_records_range(buffer)
 end
 
 
+--- Write over `source_buffer` with the current selection from `timeline_buffer`.
+---
+--- Important:
+---     This function assumes that the cursor is currently in the Timeline View's window.
+---     TODO: It'd be nice to remove this restriction.
+---
+--- @param timeline_buffer number
+---     A 0-or-more ID indicating the buffer that has a Record selection.
+--- @param source_buffer number
+---     A 0-or-more ID indicating the file-buffer to overwrite and save.
+---
 function M.run_restore_action(timeline_buffer, source_buffer)
     local start_record, end_record = unpack(_get_records_range(timeline_buffer))
 
@@ -128,7 +183,21 @@ function M.run_restore_action(timeline_buffer, source_buffer)
 end
 
 
--- TODO: Add docstring
+--- Open windows / data from `timeline_buffer`.
+---
+--- Depending on what the found Record objects are, this may spawn new windows,
+--- reuse existing windows, or do other things. See the
+--- `"./lua/timeline/_core/sources/*.lua"` folder for details.
+---
+--- Important:
+---     This function assumes that the cursor is currently in the Timeline View's window.
+---     TODO: It'd be nice to remove this restriction.
+---
+--- @param timeline_buffer number
+---     A 0-or-more ID indicating the buffer that has a Record selection.
+--- @param source_buffer number
+---     A 0-or-more ID indicating the file-buffer to possibly change or extend.
+---
 function M.run_open_action(timeline_buffer, source_buffer)
     local records = _get_selected_records(timeline_buffer)
 
@@ -168,7 +237,9 @@ end
 --- @param timeline_buffer number
 ---     A 0-or-more ID pointing to the Timeline View.
 --- @param source_buffer number
----     A 0-or-more ID pointing to a paired buffer.
+---     A 0-or-more ID pointing to a paired buffer This buffer's window might
+---     have its window overwritten in the process. If there's no window containing
+---     `source_buffer`, the diff action typically creates 2 new windows for the diff.
 ---
 function M.run_show_diff_action(timeline_buffer, source_buffer)
     local records = _get_selected_records(timeline_buffer)
@@ -200,7 +271,19 @@ function M.run_show_diff_action(timeline_buffer, source_buffer)
 end
 
 
--- TODO: Add docstring
+--- Open a debugging view for the selected Records.
+---
+--- Important:
+---     This function assumes that the cursor is currently in the Timeline View's window.
+---     TODO: It'd be nice to remove this restriction.
+---
+--- @param timeline_buffer number
+---     A 0-or-more ID pointing to the Timeline View.
+--- @param source_buffer number
+---     A 0-or-more ID pointing to a paired buffer This buffer's window might
+---     have its window overwritten in the process. If there's no window containing
+---     `source_buffer`, the diff action typically creates 2 new windows for the diff.
+---
 function M.run_show_manifest_action(timeline_buffer, source_buffer)
     local start_record, end_record = unpack(_get_records_range(timeline_buffer))
 
@@ -222,7 +305,22 @@ function M.run_show_manifest_action(timeline_buffer, source_buffer)
 end
 
 
--- TODO: Add docstring
+--- Open the file at a current Record's history.
+---
+--- This is useful when you want to know "what does this file look like at this
+--- point in time?"
+---
+--- Important:
+---     This function assumes that the cursor is currently in the Timeline View's window.
+---     TODO: It'd be nice to remove this restriction.
+---
+--- @param timeline_buffer number
+---     A 0-or-more ID pointing to the Timeline View.
+--- @param source_buffer number
+---     A 0-or-more ID pointing to a paired buffer This buffer's window might
+---     have its window overwritten in the process. If there's no window containing
+---     `source_buffer`, the diff action typically creates 2 new windows for the diff.
+---
 function M.run_view_this_action(timeline_buffer, source_buffer)
     local start_record, end_record = unpack(_get_records_range(timeline_buffer))
 

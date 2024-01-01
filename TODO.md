@@ -167,7 +167,8 @@ TODO add screenshot
     - type: string
     - id: GitCommit | string
 
-- Split the "core" of this plugin which needs autocommands to a separate plugin
+- Split the "core" of this plugin which needs autocommands and any callbacks
+  needed for specific events to a separate plugin
 - Let the "UI" portion be separate
 
 - Open (diff / summary)
@@ -231,6 +232,7 @@ refresh = {
 - force refresh (clear all caches and refresh)
     - key = "R"
 
+- Visual mode Timeline View unittest - make sure that it works for all visual modes
 
 ```json
 {

@@ -1,3 +1,5 @@
+local Path = require("plenary.path")
+
 --- Functions for working with disk-like file/folder paths.
 ---
 --- @module 'timeline._core.vim_utilities.filer'
@@ -42,6 +44,17 @@ function M.join_path(parts)
     end
 
     return output
+end
+
+
+--- Create a relative path starting from `root`, pointing to `full_path`.
+---
+--- @param root string The absolute directory to make-relative.
+--- @param full_path string An absolute path to return as relative.
+--- @return string # The computed relative path.
+---
+function M.get_relative_path(root, full_path)
+    return Path:new(full_path):make_relative(root)
 end
 
 

@@ -6,7 +6,18 @@ local M = {}
 
 M.Record = {}
 
+-- TODO: Finish docstring
 --- @class Record An individual entry to display in the Timeline Viewer.
+
+--- @class RecordRange
+---     This range is meant to be *inclusive* as in operations that use it
+---     should consider both values and not "search" for any Record entries around
+---     the Record history. Note: the start and end Record is allowed
+---     to be the same Record.
+--- @field 1 Record
+---     The starting Record to compare / operate from.
+--- @field 2 Record
+---     The ending Record to compare / operate from.
 
 function M.Record:new(data)
     local self = {}
