@@ -111,9 +111,9 @@ local function _collect(payload, icon)
                     -- TODO: Add this, later
                     details=function()
                         return {
-                            file_path = repository_path,
                             git_commit = commit,
-                            repository = repository,
+                            repository_path = repository_path,
+                            repository_root = repository,
                         }
                     end,
                     icon=function()

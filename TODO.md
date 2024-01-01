@@ -17,8 +17,6 @@ TODO add screenshot
 - General
     - Each entry should be aggregate (if they can be)
         - Also allow an expand / collapse tree
-    - Visual selection + mapping == operate the selected part
-    - Virtual text on each entry shows the date (customizable). E.g. a list of callers or text like separators
     - A plugin system so people can register their own sources
     - Need a command to package up a backup (for github issues)
         - Allow users to exclude certain histories (security)
@@ -28,9 +26,6 @@ TODO add screenshot
     - Compare previous
     - Configuration options - allow users to configure what is saved (security)
     - Maybe need to batch stuff together
-    - Add icons per entry - fallback to characters if the fonts are not installed
-        git - "󰜘"
-        file - 
     - Actions
         - If the user selects multiple lines in visual mode
             - If not allowed, fail early
@@ -50,10 +45,7 @@ TODO add screenshot
     - Probably want to debounce
     - Uses global git repository
 - File save
-    - Needs before / after copy
-        - "Restore from current window" option
-    - Can be built-in
-    - Uses global git repository
+    - "Restore from current window" option
     - If no changes, don’t commit anything
         - Configurable (you can turn this on, but off by default)
 - Git
@@ -195,11 +187,10 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
   Otherwise, use Vim's built-in input function
 - Make sure the Lua files and everything seem natural
 - Remove old print calls
-- Remove any unneeded init.lua files
 - Figure out how to clean up the output of terminal.run
 - Ask Neovim maintainers how to make pop-ups show above multiple windows at once (floating)
-- Add virtual text for the date
 - Make the diff view better
+    - You should be able to open, close, and reopen a diff
 - Do profiling and figure out how to get the code to be faster
 - Make the differ better. As diffoff should remove everything and not keep any buffers
 - Git commit diff isn't working
@@ -215,5 +206,3 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 
 - Update all functions that assume that it's running in the current buffer / window to not do that
     - e.g. all of action_triage.lua
-
-- Add datetime options

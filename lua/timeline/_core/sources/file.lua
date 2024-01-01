@@ -69,6 +69,7 @@ local function _collect(payload, icon)
                             return {
                                 open = function(records)
                                     local window = payload.source_window
+
                                     if not vim.api.nvim_win_is_valid(window)
                                     then
                                         window = nil
@@ -76,8 +77,30 @@ local function _collect(payload, icon)
 
                                     differ.open_diff_records_and_summary(records, window)
                                 end,
+                                restore = function(record)
+                                    local template = "git show %s:%s"
+                                    local command = string.format(template, commit, repository_path)
+                                    local success, stdout, _ = unpack(
+                                        terminal.run(command, { cwd=repository })
+                                    )
+
+                                    if not success
+                                    then
+                                        vim.api.nvim_err_writeln(
+                                            string.format(
+                                                'Cannot restore. Command "%s" at directory "%s" failed to run with "%s".',
+                                                command,
+                                                repository,
+                                                table.concat(stdout, "\n")
+                                            )
+                                        )
+
+                                        return
+                                    end
+                                end,
                                 show_diff = function(records)
                                     local window = payload.source_window
+
                                     if not vim.api.nvim_win_is_valid(window)
                                     then
                                         window = nil
@@ -106,9 +129,9 @@ local function _collect(payload, icon)
                         -- TODO: Add this, later
                         details=function()
                             return {
-                                file_path = repository_path,
                                 git_commit = commit,
-                                repository = repository,
+                                repository_path = repository_path,
+                                repository_root = repository,
                             }
                         end,
                         icon=function()

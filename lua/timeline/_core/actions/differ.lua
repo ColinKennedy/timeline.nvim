@@ -177,12 +177,9 @@ function M.open_diff_records(records, replacement_window)
         end_commit = end_record:get_details().git_commit
     end
 
-    local source_path = start_details.file_path
-    local repository = start_details.repository
-
     _open_diff_commits(
-        source_path,
-        repository,
+        start_details.repository_path,
+        start_details.repository_root,
         start_commit,
         end_commit,
         replacement_window
