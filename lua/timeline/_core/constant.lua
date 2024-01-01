@@ -14,6 +14,7 @@ M.RecordTypes = {
 M.SourceTypes = {
     file = "file",
     git = "git",
+    restore = "restore",
 }
 M.VIEWER_FILE_TYPE = "timeline_viewer"
 

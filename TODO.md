@@ -38,6 +38,9 @@ TODO add screenshot
     - Allow people to change the date timezone
 
 
+- Restore
+    - Comes in place of a file save
+    - Uses global git repository
 - Undo / Redo
     - Needs before / after copy
         - "Restore from current window" option
@@ -206,3 +209,5 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 
 - Update all functions that assume that it's running in the current buffer / window to not do that
     - e.g. all of action_triage.lua
+
+- Change all terminal.run commands into lists

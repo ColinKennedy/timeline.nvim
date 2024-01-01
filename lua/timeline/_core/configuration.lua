@@ -63,10 +63,12 @@ M._DEFAULTS = {
             description = "Show [m]anifest for 1+ records, if allowed. e.g. show its internal/debug details.",
         },
     },
-    repository_paths = {vim.fn.expand("~/.vim_custom_backups")},
+    backup_repository_path = _BACKUP_DIRECTORY,
+    source_repository_paths = {_BACKUP_DIRECTORY},
     sources = {
         [constant.SourceTypes.file] = { icon = "" },
         [constant.SourceTypes.git] = { icon = "󰜘" },
+        [constant.SourceTypes.restore] = { icon = "󰑏" },
     },
     timeline_window = {
         size = 20,

@@ -19,9 +19,7 @@ local function _collect(payload, icon)
     -- TODO: Find a better way to implement a cache
     local cache = {}
 
-    -- TODO: Add this back in later
-    -- for _, repository in ipairs(configuration.repository_paths)
-    for _, repository in ipairs({"/home/selecaotwo/.vim_custom_backups"})
+    for _, repository in ipairs(configuration.DATA.source_repository_paths)
     do
         cache[repository] = {}
 

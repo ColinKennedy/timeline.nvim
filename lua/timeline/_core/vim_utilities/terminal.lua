@@ -60,6 +60,7 @@ end
 ---     Some CLI/terminal command. e.g. `"ls"`.
 --- @param options table<string, object>
 ---     Options to include for the command. e.g. `{cwd="/path/to/somewhere"}`.kj
+--- TODO: Fix this return type
 --- @return table<boolean, string[], string[]>
 ---     The boolean means "did this command exit with a 0 return code".
 ---     The arrays of strings are stdout and stderr.

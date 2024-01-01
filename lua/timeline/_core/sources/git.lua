@@ -7,6 +7,7 @@ local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
 local tabler = require("timeline._core.vim_utilities.tabler")
 
+
 local M = {}
 
 M.Source = base.Source:new()
@@ -136,6 +137,7 @@ local function _collect(payload, icon)
 
     return output
 end
+
 
 function M.Source:get_type()
     return constant.SourceTypes.git

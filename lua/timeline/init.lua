@@ -3,6 +3,7 @@
 --- @module 'timeline'
 ---
 
+local backup = require("timeline._core.git_utilities.backup")
 local configuration = require("timeline._core.configuration")
 local source_registry = require("timeline._core.components.source_registry")
 
@@ -15,32 +16,24 @@ local M = {}
 --- @return boolean # If the data is valid, return `true`. Otherwise fail with a message.
 ---
 local function _validate_data(data)
-    local paths = data.repository_paths
+    local paths = data.source_repository_paths
 
     if vim.tbl_isempty(paths)
     then
-        vim.api.nvim_err_writeln('"repository_paths" key cannot be empty.')
+        vim.api.nvim_err_writeln('"source_repository_paths" key cannot be empty.')
 
         return false
     end
 
-    local repository_paths = {}
+    local resolved_paths = {}
 
     for _, path in ipairs(paths)
     do
-        if not vim.fn.isdirectory(path)
-        then
-            vim.api.nvim_err_writeln(
-                string.format('"repository_paths" key "%s" does not exist.', path)
-            )
-
-            return false
-        end
-
-        table.insert(repository_paths, vim.fn.expand(path))
+        table.insert(resolved_paths, vim.fn.expand(path))
     end
 
-    data.repository_paths = repository_paths
+    data.source_repository_paths = resolved_paths
+
     -- TODO: Check the other keys and stuff
 
     return true
@@ -83,6 +76,7 @@ end
 function M.setup(data)
     _setup_configuration(data)
     _setup_autocommands()
+    backup.setup(configuration.DATA.backup_repository_path)
 end
 
 
