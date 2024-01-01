@@ -52,7 +52,11 @@ local function _apply_records_to_viewer(records, buffer)
 end
 
 
--- TODO: docstring
+--- Show virtual text at the current cursor line in `buffer`.
+---
+--- @param buffer number A 0-or-more ID to some buffer.
+--- @param namespace number 1-or-more ID used for drawing the virtual text.
+---
 local function _add_datetime_virtual_text(buffer, namespace)
     -- TODO: Figure out how to call this with an explicit window ID
     local records = record_.get_selected_records() or {
@@ -92,7 +96,10 @@ local function _add_datetime_virtual_text(buffer, namespace)
 end
 
 
--- TODO: docstring
+--- Update virtual text whenever the cursor changes in `buffer`.
+---
+--- @param buffer number A 0-or-more ID to some buffer.
+---
 local function _apply_timeline_auto_commands(buffer)
     vim.api.nvim_create_autocmd(
         {"CursorMoved", "CursorMovedI"},
