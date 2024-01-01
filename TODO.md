@@ -216,6 +216,7 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Move all uses of configuration.DATA to a variable that gets passed around to various functions, instead
 
 - Allow people to toggle / filter / show record types in an existing timeline view without having to recompute everything all over again
+- Make sure "restore" works as expected
 
 refresh = {
     key = "r",

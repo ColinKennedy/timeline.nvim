@@ -6,6 +6,7 @@ local differ = require("timeline._core.actions.differ")
 local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
 local tabler = require("timeline._core.vim_utilities.tabler")
+local terminal = require("timeline._core.vim_utilities.terminal")
 
 
 local M = {}
@@ -105,7 +106,11 @@ local function _collect(payload)
                                     end,
                                     restore = function(record)
                                         local template = "git show %s:%s"
-                                        local command = string.format(template, commit, repository_path)
+                                        local command = string.format(
+                                            template,
+                                            record:get_details().git_commit,
+                                            repository_path
+                                        )
                                         local success, stdout, _ = unpack(
                                             terminal.run(command, { cwd=repository })
                                         )
