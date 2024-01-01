@@ -47,6 +47,11 @@ M._DEFAULTS = {
             command = action_triage.run_open_action,
             description = "Run the default-[o]pen for 1+ records, if allowed.",
         },
+        refresh = {
+            key = "r",
+            command = action_triage.run_refresh_action,
+            description = "[r]efresh the Timeline View buffer.",
+        },
         restore = {
             key = "u",
             command = action_triage.run_restore_action,

@@ -79,101 +79,104 @@ local function _collect(payload)
                 record_type = constant.RecordTypes.file_save
             end
 
-            local label = _get_label_from_type(record_type)
-            local icon = configuration.DATA.records[record_type].icon
+            if configuration.DATA.records[record_type].enabled
+            then
+                local label = _get_label_from_type(record_type)
+                local icon = configuration.DATA.records[record_type].icon
 
-            table.insert(
-                output,
-                -- TODO: Figure out how to defer all of this but still do as few
-                -- git queries as possible
-                --
-                record_.Record:new(
-                    {
-                        actions=function()
-                            return {
-                                open = function(records)
-                                    local window = payload.source_window
+                table.insert(
+                    output,
+                    -- TODO: Figure out how to defer all of this but still do as few
+                    -- git queries as possible
+                    --
+                    record_.Record:new(
+                        {
+                            actions=function()
+                                return {
+                                    open = function(records)
+                                        local window = payload.source_window
 
-                                    if not vim.api.nvim_win_is_valid(window)
-                                    then
-                                        window = nil
-                                    end
+                                        if not vim.api.nvim_win_is_valid(window)
+                                        then
+                                            window = nil
+                                        end
 
-                                    differ.open_diff_records_and_summary(records, window)
-                                end,
-                                restore = function(record)
-                                    local template = "git show %s:%s"
-                                    local command = string.format(template, commit, repository_path)
-                                    local success, stdout, _ = unpack(
-                                        terminal.run(command, { cwd=repository })
-                                    )
-
-                                    if not success
-                                    then
-                                        vim.api.nvim_err_writeln(
-                                            string.format(
-                                                'Cannot restore. Command "%s" at directory "%s" failed to run with "%s".',
-                                                command,
-                                                repository,
-                                                table.concat(stdout, "\n")
-                                            )
+                                        differ.open_diff_records_and_summary(records, window)
+                                    end,
+                                    restore = function(record)
+                                        local template = "git show %s:%s"
+                                        local command = string.format(template, commit, repository_path)
+                                        local success, stdout, _ = unpack(
+                                            terminal.run(command, { cwd=repository })
                                         )
 
-                                        return
-                                    end
-                                end,
-                                show_diff = function(records)
-                                    local window = payload.source_window
+                                        if not success
+                                        then
+                                            vim.api.nvim_err_writeln(
+                                                string.format(
+                                                    'Cannot restore. Command "%s" at directory "%s" failed to run with "%s".',
+                                                    command,
+                                                    repository,
+                                                    table.concat(stdout, "\n")
+                                                )
+                                            )
 
-                                    if not vim.api.nvim_win_is_valid(window)
-                                    then
-                                        window = nil
-                                    end
+                                            return
+                                        end
+                                    end,
+                                    show_diff = function(records)
+                                        local window = payload.source_window
 
-                                    differ.open_diff_records(records, window)
-                                end,
-                            }
-                        end,
-                        datetime_number=function()
-                            return get_datetime():timestamp()
-                        end,
-                        datetime_text=function()
-                            -- TODO: Add caching
-                            local datetime = get_datetime()
+                                        if not vim.api.nvim_win_is_valid(window)
+                                        then
+                                            window = nil
+                                        end
 
-                            if datetime == nil
-                            then
-                                return "<No datetime found>"
+                                        differ.open_diff_records(records, window)
+                                    end,
+                                }
+                            end,
+                            datetime_number=function()
+                                return get_datetime():timestamp()
+                            end,
+                            datetime_text=function()
+                                -- TODO: Add caching
+                                local datetime = get_datetime()
+
+                                if datetime == nil
+                                then
+                                    return "<No datetime found>"
+                                end
+
+                                return datetime:strftime(
+                                    configuration.DATA.timeline_window.datetime.format
+                                )
+                            end,
+                            -- TODO: Add this, later
+                            details=function()
+                                return {
+                                    git_commit = commit,
+                                    repository_path = repository_path,
+                                    repository_root = repository,
+                                }
+                            end,
+                            icon=function()
+                                return icon
+                            end,
+                            label=function()
+                                return label
+                            end,
+                            -- source=self, -- TODO: Not sure if I'll need this
+                            record_type=function()
+                                return record_type
+                            end,
+                            source_type=function()
+                                return source_type
                             end
-
-                            return datetime:strftime(
-                                configuration.DATA.timeline_window.datetime.format
-                            )
-                        end,
-                        -- TODO: Add this, later
-                        details=function()
-                            return {
-                                git_commit = commit,
-                                repository_path = repository_path,
-                                repository_root = repository,
-                            }
-                        end,
-                        icon=function()
-                            return icon
-                        end,
-                        label=function()
-                            return label
-                        end,
-                        -- source=self, -- TODO: Not sure if I'll need this
-                        record_type=function()
-                            return record_type
-                        end,
-                        source_type=function()
-                            return source_type
-                        end
-                    }
+                        }
+                    )
                 )
-            )
+            end
         end
     end
 

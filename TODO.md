@@ -15,6 +15,8 @@
 TODO add screenshot
 
 - General
+    - Add "View From Here" action
+        - Allow restore from the view
     - Each entry should be aggregate (if they can be)
         - Also allow an expand / collapse tree
     - A plugin system so people can register their own sources
@@ -42,11 +44,6 @@ TODO add screenshot
     - Comes in place of a file save
     - Uses global git repository
 - Undo / Redo
-    - Needs before / after copy
-        - "Restore from current window" option
-    - Can be built-in
-    - Probably want to debounce
-    - Uses global git repository
     - If possible, store information about the previous position in the ShaDa tree?
 - File save
     - "Restore from current window" option
@@ -216,6 +213,15 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 
 
 - Make the diff view splitright when there's no existing window to work off of
+- Move all uses of configuration.DATA to a variable that gets passed around to various functions, instead
+
+- Allow people to toggle / filter / show record types in an existing timeline view without having to recompute everything all over again
+
+refresh = {
+    key = "r",
+    command = action_triage.run_refresh_action,
+    description = "[r]efresh the Timeline View buffer.",
+},
 
 ```json
 {
