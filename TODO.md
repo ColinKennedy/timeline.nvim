@@ -47,6 +47,7 @@ TODO add screenshot
     - Can be built-in
     - Probably want to debounce
     - Uses global git repository
+    - If possible, store information about the previous position in the ShaDa tree?
 - File save
     - "Restore from current window" option
     - If no changes, don’t commit anything
@@ -211,3 +212,11 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
     - e.g. all of action_triage.lua
 
 - Change all terminal.run commands into lists
+- Allow the timeline view to update as the user is working
+
+
+```json
+{
+    "extras": "arbitrary-stuff-here",
+    "record_type": "blah"
+}

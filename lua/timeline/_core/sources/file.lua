@@ -13,6 +13,16 @@ local M = {}
 M.Source = base.Source:new()
 
 
+local function _get_label_from_type(record_type)
+    local labels = {
+        file_save = "File Save",
+        undo_redo = "Undo / Redo",
+    }
+
+    return labels[record_type]
+end
+
+
 local function _collect(payload)
     local output = {}
 
@@ -69,6 +79,7 @@ local function _collect(payload)
                 record_type = constant.RecordTypes.file_save
             end
 
+            local label = _get_label_from_type(record_type)
             local icon = configuration.DATA.records[record_type].icon
 
             table.insert(
@@ -151,7 +162,7 @@ local function _collect(payload)
                             return icon
                         end,
                         label=function()
-                            return "File Save"
+                            return label
                         end,
                         -- source=self, -- TODO: Not sure if I'll need this
                         record_type=function()

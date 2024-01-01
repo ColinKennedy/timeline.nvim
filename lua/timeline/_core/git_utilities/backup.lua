@@ -43,7 +43,7 @@ local function _initialize_root(root)
 end
 
 
-local function _backup_file(root, buffer)
+function M.backup_file(root, buffer, record_type)
     _initialize_root(root)
 
     local source_path = vim.fn.fnamemodify(vim.fn.bufname(buffer), ":p")
@@ -103,7 +103,7 @@ local function _backup_file(root, buffer)
         "git notes add -m \'%s\'",
         vim.fn.json_encode(
             {
-                record_type = constant.RecordTypes.file_save,
+                record_type = record_type,
                 timeline_version = version.VERSION,
             }
         )
@@ -142,7 +142,11 @@ function M.setup(root)
                 -- effectively treated like a backup commit, in case no other
                 -- action / source touches a file first.
                 --
-                vim.schedule(function() _backup_file(root, buffer) end)
+                vim.schedule(
+                    function()
+                        M.backup_file(root, buffer, constant.RecordTypes.file_save)
+                    end
+                )
             end,
             group = _GROUP,
         }

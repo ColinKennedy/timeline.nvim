@@ -5,7 +5,10 @@
 
 local backup = require("timeline._core.git_utilities.backup")
 local configuration = require("timeline._core.configuration")
+local constant = require("timeline._core.constant")
+local debounce = require("timeline._core.vim_utilities.debounce")
 local source_registry = require("timeline._core.components.source_registry")
+local undo_manager = require("timeline._core.components.undo_manager")
 
 local M = {}
 
@@ -64,12 +67,61 @@ local function _setup_configuration(data)
 end
 
 
+--- Initialize mappings that persist through the Neovim session.
+---
+--- @param root string The git repository where file history / undos / etc are saved.
+---
+local function _setup_global_mappings(root)
+    local milliseconds = 300
+    local debounced = debounce.debounce_trailing(
+        undo_manager.add_undo_redo_record_if_needed,
+        milliseconds
+    )
+
+    vim.keymap.set(
+        "n",
+        "u",
+        function()
+            debounced(root, vim.fn.bufnr())
+
+            return "u"
+        end,
+        { desc = "[u]ndo and send a backup to timeline.nvim.", expr = true }
+    )
+    vim.keymap.set(
+        "n",
+        "U",
+        function()
+            debounced(root, vim.fn.bufnr())
+
+            return "U"
+        end,
+        { desc = "[u]ndo and send a backup to timeline.nvim.", expr = true }
+    )
+    vim.keymap.set(
+        "n",
+        "<C-r>",
+        function()
+            debounced(root, vim.fn.bufnr())
+
+            return "<C-r>"
+        end,
+        { desc = "[r]edo and send a backup to timeline.nvim.", expr = true }
+    )
+end
+
 --- Initialize this plugin so it can run
 ---
 --- @param data TimelineConfiguration The settings which control timeline.nvim.
 ---
 function M.setup(data)
     _setup_configuration(data)
+
+    if configuration.DATA.records[constant.RecordTypes.undo_redo].enabled
+    then
+        _setup_global_mappings(configuration.DATA.backup_repository_path)
+    end
+
     backup.setup(configuration.DATA.backup_repository_path)
 end
 
