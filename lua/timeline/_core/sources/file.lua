@@ -1,3 +1,5 @@
+-- TODO: Add docstrings
+
 local base = require("timeline._core.sources.base")
 local cache = require("timeline._core.components.cache")
 local configuration = require("timeline._core.configuration")

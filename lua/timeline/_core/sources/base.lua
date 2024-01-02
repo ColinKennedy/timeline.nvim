@@ -1,3 +1,9 @@
+-- TODO: Add docstrings
+--- asfdsfd
+---
+--- @module 'timeline._core.sources.base'
+---
+
 local configuration = require("timeline._core.configuration")
 
 local M = {}

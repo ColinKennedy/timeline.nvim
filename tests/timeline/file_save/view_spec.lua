@@ -16,6 +16,10 @@ local function _make_empty_git_repository()
 end
 
 
+--- Create a git repository with some existing File Save commits included.
+---
+--- @return string # The full path to the root of the git repository.
+---
 local function _make_git_repository_with_file_saves()
     local directory = vim.fn.tempname()
     vim.fn.mkdir(directory, "p")
