@@ -1,3 +1,8 @@
+--- Call "git" commands on the terminal
+---
+--- @module 'timeline._core.git_utilities.git_parser'
+---
+
 local filer = require("timeline._core.vim_utilities.filer")
 local tabler = require("timeline._core.vim_utilities.tabler")
 local terminal = require("timeline._core.vim_utilities.terminal")

@@ -12,6 +12,8 @@ local constant = require("timeline._core.constant")
 local M = {}
 
 --- @class TimelineConfiguration
+--- @field git_executable string
+---     Either a command on PATH or an absolute path to some git executable.
 --- @field mappings table<string, KeymapPrototype>
 ---     Psuedo-keys to run in the Timeline buffer.
 --- @field backup_repository_path string
@@ -41,6 +43,7 @@ local M = {}
 local _BACKUP_DIRECTORY = vim.fn.expand("~/.vim_custom_backups")
 
 M._DEFAULTS = {
+    git_executable = "git",
     mappings = {
         open = {
             key = "<leader>o",

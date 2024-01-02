@@ -35,6 +35,17 @@ local function _validate_data(data)
         table.insert(resolved_paths, vim.fn.expand(path))
     end
 
+    local executable = data.git_executable
+
+    if vim.fn.executable(executable) ~= 1
+    then
+        vim.api.nvim_err_writeln(
+            '"git_executable" was not found. Check spelling and try again.'
+        )
+
+        return false
+    end
+
     data.source_repository_paths = resolved_paths
 
     -- TODO: Check the other keys and stuff
@@ -46,11 +57,16 @@ end
 --- Apply configuration options to timeline.nvim.
 ---
 --- @param data TimelineConfiguration The settings which control timeline.nvim.
+--- @return boolean # If `data` is valid, return `true`.
 ---
 local function _setup_configuration(data)
     local data = data or {}
     data = vim.tbl_deep_extend("force", configuration._DEFAULTS, data)
-    _validate_data(data)
+
+    if not _validate_data(data)
+    then
+        return false
+    end
 
     local sources = source_registry.create_sources()
 
@@ -64,6 +80,8 @@ local function _setup_configuration(data)
 
     configuration.DATA = data
     source_registry.SOURCES = sources
+
+    return true
 end
 
 
@@ -115,7 +133,12 @@ end
 --- @param data TimelineConfiguration The settings which control timeline.nvim.
 ---
 function M.setup(data)
-    _setup_configuration(data)
+    if not _setup_configuration(data)
+    then
+        vim.api.nvim_err_writeln('No git executable was found. Cannot run timeline.nvim!')
+
+        return
+    end
 
     if configuration.DATA.records[constant.RecordTypes.undo_redo].enabled
     then

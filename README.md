@@ -19,6 +19,13 @@ TODO add videos / GIFs
 ## Installation
 TODO: Fill all of this out
 
+
+### Requirements
+TODO add URL
+
+- An installation of git
+
+
 ### Lazy.nvim
 ```lua
 {
@@ -26,6 +33,7 @@ TODO: Fill all of this out
     config = function()
         require("timeline").setup()
     end
+    dependencies = {"nvim-lua/plenary.nvim"}
 }
 ```
 
