@@ -1,5 +1,7 @@
-- Add docstrings
 - Add unittests
+- Git commits / File Save
+   - Add "View This"
+   - Add "Restore From This"
 
 
 - Summary
@@ -121,6 +123,8 @@ TODO add screenshot
         - By default shows the file with the tests at that time
             - Probably requires tree-sitter to get the exact line numbers unless the tests themselves show it
     - Can map to current tests on-disk but would be experimental
+    - Allow people to provide their own methods for gathering test information
+    - Allow "search paths" for serialized test results?
     - Uses global git repository
 - Code review
     - Comments added / replied
