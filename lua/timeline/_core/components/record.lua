@@ -14,6 +14,7 @@ M.Record = {}
 -- TODO: Finish docstring
 --- @class Record An individual entry to display in the Timeline Viewer.
 
+-- TODO: Finish docstring
 --- @class RecordRange
 ---     This range is meant to be *inclusive* as in operations that use it
 ---     should consider both values and not "search" for any Record entries around

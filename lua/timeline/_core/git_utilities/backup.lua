@@ -177,7 +177,7 @@ function M.setup(root)
     vim.api.nvim_create_autocmd(
         { "BufWritePost" },
         {
-            callback = function ()
+            callback = function()
                 local buffer = vim.fn.bufnr()
 
                 -- Important: We schedule the backup to later in Neovim's execution.
