@@ -68,10 +68,21 @@ function M.backup_file(root, buffer, record_type)
     _initialize_root(root)
 
     local source_path = vim.fn.fnamemodify(vim.fn.bufname(buffer), ":p")
+
+    if vim.fn.filereadable(source_path) ~= 1
+    then
+        -- The user is working off an unsaved buffer. Don't save any history onto it.
+        -- TODO: I wonder if I should treat this as a "File Deleted"? No,
+        -- right? After all, a file might not exist because of a `git checkout`
+        -- or something else.
+        --
+        return
+    end
+
     local repository_path = filer.join_path(
         {
             root,
-            git_parser.get_repository_path(source_path),
+            git_parser.get_backup_repository_path(source_path),
         }
     )
 

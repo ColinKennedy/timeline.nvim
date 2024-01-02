@@ -241,6 +241,8 @@ refresh = {
   unittests (a source repository that has never been saved before is not an
   error)
 - If "git init" is slow, consider doing it during setup() instead of the backup function
+- Handle "commit missing" issues. A commit might get rebased away and it should
+  be treated as ephemeral
 
 
 ```json

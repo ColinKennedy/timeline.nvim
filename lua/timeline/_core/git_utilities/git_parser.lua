@@ -11,6 +11,15 @@ local text_mate = require("timeline._core.vim_utilities.text_mate")
 
 local M = {}
 
+--- @class NotePayload
+---     Extra information added onto commits that indicates what the commit is about.
+--- @field record_type string
+---     A description of what type of commit this is. e.g. a "Undo / Redo",
+---     "File Save", or something else.
+--- @field timeline_version Version
+---     When Timeline Viewer creates a git commit, we save the "current
+---     version" of Timeline Viewer into the NotePayload in case we need it for
+---     backwards compatibility reasons later.
 
 --- Find the UNIX epoch datetime for `commit` at `repository`.
 ---
@@ -39,6 +48,13 @@ function M.get_commit_datetime(commit, repository)
 end
 
 
+--- Find the source code of `path`, in `repository`, at git `commit`.
+---
+--- @param path string A relative path to some git-tracked file path.
+--- @param repository string The absolute directory on-disk for a git repository.
+--- @param commit string Some ID to search within `repository`. e.g. `"a93afa9"`.
+--- @return string[]? # The source code that was found, if any.
+---
 function M.get_commit_text(path, repository, commit)
     local template = "git show %s:%s"
     local command = string.format(template, commit, path)
@@ -64,7 +80,19 @@ function M.get_commit_text(path, repository, commit)
 end
 
 
-function M.get_latest_changes(repository, path, start_index, end_index)
+--- Find all changes for `path` between `start_index` and `end_index`.
+---
+--- Important:
+---     This function is *inclusive*. The returned commits will include at
+---     least `start_index` and `end_index` in the output.
+---
+--- @param path string A relative path to some git-tracked file path.
+--- @param repository string The absolute directory on-disk for a git repository.
+--- @param start_index number A 0-or-more value indicating the first change to return.
+--- @param end_index number A 1-or-more value indicating the last change to return.
+--- @return string[]? # The found commits, if any.
+---
+function M.get_latest_changes(path, repository, start_index, end_index)
     -- Reference: https://www.reddit.com/r/git/comments/18u7e7s/comment/kfjb9fl/?utm_source=share&utm_medium=web2x&context=3
     local command = string.format(
         'git log --skip=%s --max-count=%s --pretty=format:"%%h" -- \'%s\'',
@@ -89,6 +117,12 @@ function M.get_latest_changes(repository, path, start_index, end_index)
 end
 
 
+--- Get a JSON payload from a git note, if it exists.
+---
+--- @param repository string The absolute directory on-disk for a git repository.
+--- @param commit string Some ID to search within `repository`. e.g. `"a93afa9"`.
+--- @return NotePayload? The found note data, if any.
+---
 function M.get_notes(repository, commit)
     local command = "git notes show " .. commit
     local success, stdout, _ = unpack(terminal.run(command, { cwd=repository }))
@@ -124,7 +158,15 @@ function M.get_notes(repository, commit)
 end
 
 
-function M.get_repository_path(path)
+--- Convert `path` into a git-
+---
+--- @param path string
+---     An absolute path to a file on-disk.
+--- @return string
+---     A relative path that is compatible with the git repository located at
+---     `backup_repository_path`.
+---
+function M.get_backup_repository_path(path)
     local stripped = filer.lstrip_path(path)
     local repository_relative_path = filer.join_path({vim.fn.hostname(), stripped})
 
@@ -132,6 +174,14 @@ function M.get_repository_path(path)
 end
 
 
+--- Find the top-most directory of some git repository.
+---
+--- @param path string
+---     Some absolute path that we expect to be within a git repository.
+--- @return string?
+---     The found directory, if any. If `path` isn't in a git repository,
+---     nothing is returned.
+---
 function M.get_repository_root(path)
     local command = "git rev-parse --show-toplevel"
     local success, stdout, stderr = unpack(terminal.run(command, { cwd=path }))

@@ -40,8 +40,8 @@ local function _collect(payload, icon)
 
     for _, commit in ipairs(
         git_parser.get_latest_changes(
-            repository,
             repository_path,
+            repository,
             payload.offset,
             payload.height + payload.offset
         ) or {}

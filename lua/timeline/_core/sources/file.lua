@@ -37,12 +37,12 @@ local function _collect(payload)
             cache.GIT_COMMIT_CACHE[repository] = {}
         end
 
-        local repository_path = git_parser.get_repository_path(payload.path)
+        local repository_path = git_parser.get_backup_repository_path(payload.path)
 
         for _, commit in ipairs(
             git_parser.get_latest_changes(
-                repository,
                 repository_path,
+                repository,
                 payload.offset,
                 payload.height + payload.offset
             ) or {}
