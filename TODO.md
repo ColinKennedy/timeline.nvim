@@ -2,6 +2,9 @@
 - Git commits / File Save
    - Add "View This"
    - Add "Restore From This"
+- Add icon colors + configuration options
+- Add text color options
+- Check if I can auto-find a timezone
 
 
 - Summary
@@ -238,13 +241,12 @@ refresh = {
 
 - Visual mode Timeline View unittest - make sure that it works for all visual modes
 - Allow users to save Undo / Redo only on-file-save, if they want
-- Check if I can auto-find a timezone
 - Make configuration options more flexible (allow string, table, function, etc)
-- Allow people to specify a custom git executable
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)
-- If "git init" is slow, consider doing it during setup() instead of the backup function
+- If "git init" is slow for making the global git repository, consider doing it
+  during setup() instead of the backup function
 - Handle "commit missing" issues. A commit might get rebased away and it should
   be treated as ephemeral
 
