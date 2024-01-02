@@ -1,3 +1,8 @@
+--- A module for creating read-only buffers from, "git-related" data.
+---
+--- @module 'timeline._core.git_utilities.git_buffer'
+---
+
 local M = {}
 
 local _GROUP = vim.api.nvim_create_augroup("TimelineGitBufferGroup", { clear = true })

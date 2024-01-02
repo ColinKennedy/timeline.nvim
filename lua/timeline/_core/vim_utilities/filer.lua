@@ -1,9 +1,9 @@
-local Path = require("plenary.path")
-
 --- Functions for working with disk-like file/folder paths.
 ---
 --- @module 'timeline._core.vim_utilities.filer'
 ---
+
+local Path = require("plenary.path")
 
 local M = {}
 
