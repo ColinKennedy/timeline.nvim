@@ -1,3 +1,8 @@
+--- A representation of some unit of work in the Timeline Viewer.
+---
+--- @module 'timeline._core.components.record'
+---
+
 local constant = require("timeline._core.constant")
 local tabler = require("timeline._core.vim_utilities.tabler")
 
@@ -37,6 +42,19 @@ function M.Record:new(data)
 end
 
 
+--- Find all of the currently-selected Record objects.
+---
+--- "Selected" means different things in different Vim modes...
+--- - Normal mode: The current line in the Timeline View window. It's always 1 line.
+--- - Visual mode: The selection in the Timeline View window. Could be 2+ lines.
+---
+--- Important:
+---     This function's expects that your current window is the Timeline Viewer.
+---     TODO: In the future, make this based on window ID.
+---
+--- @param buffer A 0-or-more ID to the Timline Viewer.
+--- @return Record[]? # The found record, if any.
+---
 function M.get_selected_records(buffer)
     local start_line = vim.fn.getpos("v")[2]
     local end_line = vim.fn.getpos(".")[2]

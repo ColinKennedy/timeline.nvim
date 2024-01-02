@@ -233,6 +233,7 @@ refresh = {
     - key = "R"
 
 - Visual mode Timeline View unittest - make sure that it works for all visual modes
+- Allow users to save Undo / Redo only on-file-save, if they want
 
 ```json
 {

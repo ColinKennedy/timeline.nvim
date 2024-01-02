@@ -1,3 +1,8 @@
+--- The primary module used to write "global git repository" backups as the user works.
+---
+--- @module 'timeline._core.git_utilities.backup'
+---
+
 local constant = require("timeline._core.constant")
 local filer = require("timeline._core.vim_utilities.filer")
 local git_parser = require("timeline._core.git_utilities.git_parser")
@@ -11,6 +16,10 @@ local _GROUP_NAME = "TimelineGitBackupGroup"
 local _GROUP = vim.api.nvim_create_augroup(_GROUP_NAME, { clear = true })
 
 
+--- Make `root` into a git repository if it isn't already.
+---
+--- @param root string An absolute directory to a git repository on-disk.
+---
 local function _initialize_root(root)
     if vim.fn.isdirectory(root) ~= 1
     then
@@ -43,6 +52,18 @@ local function _initialize_root(root)
 end
 
 
+--- Make a copy of `buffer` into `root`, if needed.
+---
+--- If `buffer` has no actual changes then no new commit to `root` is created.
+---
+--- @param root string
+---     An absolute directory to a git repository on-disk.
+--- @param buffer number
+---     The buffer to backup into `root`.
+--- @param record_type string
+---     A special category, saved as a note onto the commit. This note
+---     indicates what this Record represents.
+---
 function M.backup_file(root, buffer, record_type)
     _initialize_root(root)
 
@@ -99,6 +120,12 @@ function M.backup_file(root, buffer, record_type)
         return
     end
 
+    -- TODO: This's a bug here. If the `buffer` has no differences to the
+    -- global git repository and this `git notes add` command is using
+    -- a different `record_type` than the existing commit, the commit's old
+    -- note will be erased. We need to check if a commit was made and, only
+    -- then, do a note add.
+    --
     command = string.format(
         "git notes add -m \'%s\'",
         vim.fn.json_encode(
@@ -126,6 +153,13 @@ function M.backup_file(root, buffer, record_type)
 end
 
 
+--- Whenever the user saves in Neovim, make a backup to `root`, if able.
+---
+--- If `buffer` has no actual changes then no new commit to `root` is created.
+---
+--- @param root string
+---     An absolute directory to a git repository on-disk.
+---
 function M.setup(root)
     vim.cmd(":autocmd! " .. _GROUP_NAME .. " BufWritePost")
 

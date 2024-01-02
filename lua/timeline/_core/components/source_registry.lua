@@ -1,3 +1,10 @@
+--- The main module to setup Timline Viewer sources.
+---
+--- A "Source" is "a means of finding data to add into the Timeline Viewer".
+--- Just about anything is allowed as a Source, as long as it implements the
+--- right methods.
+---
+
 local M = {}
 
 local tabler = require("timeline._core.vim_utilities.tabler")
@@ -10,9 +17,10 @@ local _DEFAULTS = {
     git.Source,
 }
 local SOURCE_TYPES = tabler.copy(_DEFAULTS)
-local SOURCES = {}
+local SOURCES = {} -- This will be populated during `require("timeline").setup()`
 
 
+--- @return Source[] # Instantiate new Source objects based on the registry.
 function M.create_sources()
     local output = {}
 
