@@ -22,7 +22,7 @@ function M.get_datetime_with_timezone(unix_epoch)
     if configuration.DATA.timeline_window.datetime.timezone == nil
     then
         -- The user didn't specify a timezone. Skip it
-        return luatz.timetable.new_from_timestamp(unix_epoch_with_timezone_applied)
+        return luatz.timetable.new_from_timestamp(unix_epoch)
     end
 
     local unix_epoch_with_timezone_applied = luatz.time_in(
