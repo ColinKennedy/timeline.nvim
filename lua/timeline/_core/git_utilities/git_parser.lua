@@ -12,6 +12,15 @@ local text_mate = require("timeline._core.vim_utilities.text_mate")
 local M = {}
 
 
+--- Find the UNIX epoch datetime for `commit` at `repository`.
+---
+--- @param commit string
+---     Some git commit hash to check from. e.g. `"a93afa9"`.
+--- @param repository string
+---     An absolute path to some git repository. e.g. `"~/.vim_custom_backups"`.
+--- @return number?
+---     The found datetime, if any.
+---
 function M.get_commit_datetime(commit, repository)
     local command = string.format("git show --no-patch --format=%%ct %s", commit)
     local success, stdout, stderr = unpack(terminal.run(command, {cwd=repository}))
