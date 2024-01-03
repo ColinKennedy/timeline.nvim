@@ -31,7 +31,7 @@ local M = {}
 ---     The found datetime, if any.
 ---
 function M.get_commit_datetime(commit, repository)
-    local command = string.format("git show --no-patch --format=%%ct %s", commit)
+    local command = string.format("git --no-pager show --no-patch --format=%%ct %s", commit)
     local success, stdout, stderr = unpack(terminal.run(command, {cwd=repository}))
 
     if not success
@@ -56,7 +56,7 @@ end
 --- @return string[]? # The source code that was found, if any.
 ---
 function M.get_commit_text(path, repository, commit)
-    local template = "git show %s:%s"
+    local template = "git --no-pager show %s:%s"
     local command = string.format(template, commit, path)
     local success, stdout, _ = unpack(
         terminal.run(command, { cwd=repository })
@@ -95,7 +95,7 @@ end
 function M.get_latest_changes(path, repository, start_index, end_index)
     -- Reference: https://www.reddit.com/r/git/comments/18u7e7s/comment/kfjb9fl/?utm_source=share&utm_medium=web2x&context=3
     local command = string.format(
-        'git log --skip=%s --max-count=%s --pretty=format:"%%h" -- \'%s\'',
+        'git --no-pager log --skip=%s --max-count=%s --pretty=format:"%%h" -- \'%s\'',
         start_index - 1,
         end_index - start_index - 1,
         path

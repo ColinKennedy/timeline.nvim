@@ -121,7 +121,7 @@ local function _collect(payload)
                                         differ.open_diff_records_and_summary(records, window)
                                     end,
                                     restore = function(record)
-                                        local template = "git show %s:%s"
+                                        local template = "git --no-pager show %s:%s"
                                         local command = string.format(
                                             template,
                                             record:get_details().git_commit,
