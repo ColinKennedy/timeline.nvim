@@ -7,6 +7,7 @@ local constant = require("timeline._core.constant")
 local date_mate = require("timeline._core.git_utilities.date_mate")
 local differ = require("timeline._core.actions.differ")
 local filer = require("timeline._core.vim_utilities.filer")
+local git_commit = require("timeline._core.git_utilities.git_commit")
 local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
 local tabler = require("timeline._core.vim_utilities.tabler")
@@ -32,11 +33,7 @@ local function _collect(payload, icon)
         return {}
     end
 
-    -- TODO: Figure out how to cache things more simply
-    if cache.GIT_COMMIT_CACHE[repository] == nil
-    then
-        cache.GIT_COMMIT_CACHE[repository] = {}
-    end
+    cache.initialize_repository(repository)
 
     for _, commit in ipairs(
         git_parser.get_latest_changes(
@@ -47,29 +44,32 @@ local function _collect(payload, icon)
         ) or {}
     )
     do
-        if cache.GIT_COMMIT_CACHE[repository][commit] == nil
-        then
-            cache.GIT_COMMIT_CACHE[repository][commit] = {}
-        end
+        cache.initialize_commit(repository, commit)
 
         local get_datetime = function()
-            if cache.GIT_COMMIT_CACHE[repository][commit]["datetime"] ~= nil
-            then
-                return cache.GIT_COMMIT_CACHE[repository][commit]["datetime"]
-            end
+            return cache.get_cached_commit(repository, commit):get_author_date()
+        end
 
-            local unix_epoch = git_parser.get_commit_datetime(commit, repository)
+        if cache.has_cached_commit(repository, commit)
+        then
+            details = cache.get_cached_commit(repository, commit)
+        else
+            details = git_commit.get_commit_details(commit, repository)
+            cache.set_cached_commit(repository, commit, details)
+        end
 
-            if unix_epoch == nil
-            then
-                return nil
-            end
+        if details == nil
+        then
+            vim.api.nvim_err_writeln(
+                string.format(
+                    'Commit "%s" from "%s" repository could not be parsed. '
+                    .. 'Cannot continue.',
+                    commit,
+                    repository
+                )
+            )
 
-            local datetime = date_mate.get_datetime_with_timezone(unix_epoch)
-
-            cache.GIT_COMMIT_CACHE[repository][commit]["datetime"] = datetime
-
-            return cache.GIT_COMMIT_CACHE[repository][commit]["datetime"]
+            return {}
         end
 
         table.insert(
@@ -104,7 +104,14 @@ local function _collect(payload, icon)
                         }
                     end,
                     datetime_number=function()
-                        return get_datetime():timestamp()
+                        local datetime = get_datetime()
+
+                        if datetime == nil
+                        then
+                            return -1
+                        end
+
+                        return datetime:timestamp()
                     end,
                     datetime_text=function()
                         -- TODO: Add caching

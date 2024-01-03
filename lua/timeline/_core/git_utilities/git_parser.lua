@@ -200,4 +200,54 @@ function M.get_repository_root(path)
 end
 
 
+-- function M.parse_git_diff_short_stat(text)
+--     -- TODO: Add unittests for these example strings
+--     -- 5 files changed, 241 insertions(+), 30 deletions(-)
+--     -- 1 file changed, 66 insertions(+), 1 deletion(-)
+--     -- 1 file changed, 66 insertions(+)
+--     -- 1 file changed, 12 deletions(-)
+--
+--     local deletions
+--     local deletions_remainder
+--     local files
+--     local insertions
+--     local insertions_remainder
+--     local remainder
+--
+--     local prefix = "(%d+)%sfile[s]?%schanged(.+)"
+--     files, remainder = text:match(prefix)
+--     local output = {files=files}
+--
+--     if remainder == nil
+--     then
+--         return output
+--     end
+--
+--     local insertions_pattern = ",%s(%d+)%sinsertion[s]?%([+]%)(.*)"
+--     insertions, insertions_remainder = remainder:match(insertions_pattern)
+--
+--     local deletions_pattern = ",%s(%d+)%sdeletion[s]?%([-]%)(.*)"
+--
+--     if insertions ~= nil
+--     then
+--         if insertions_remainder ~= nil
+--         then
+--             deletions, _ = insertions_remainder:match(deletions_pattern)
+--         end
+--     else
+--         deletions, deletions_remainder = remainder:match(deletions_pattern)
+--
+--         if deletions_remainder ~= nil
+--         then
+--             insertions, remainder = deletions_remainder:match(insertions_pattern)
+--         end
+--     end
+--
+--     output.insertions = tonumber(insertions)
+--     output.deletions = tonumber(deletions)
+--
+--     return output
+-- end
+
+
 return M

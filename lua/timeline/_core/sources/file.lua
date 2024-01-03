@@ -4,9 +4,9 @@ local base = require("timeline._core.sources.base")
 local cache = require("timeline._core.components.cache")
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
-local date_mate = require("timeline._core.git_utilities.date_mate")
 local differ = require("timeline._core.actions.differ")
 local git_buffer = require("timeline._core.git_utilities.git_buffer")
+local git_commit = require("timeline._core.git_utilities.git_commit")
 local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
 local tabler = require("timeline._core.vim_utilities.tabler")
@@ -33,11 +33,9 @@ local function _collect(payload)
 
     for _, repository in ipairs(configuration.DATA.source_repository_paths)
     do
+        -- TODO: Refactor this
         -- TODO: Find a better way to implement a cache
-        if cache.GIT_COMMIT_CACHE[repository] == nil
-        then
-            cache.GIT_COMMIT_CACHE[repository] = {}
-        end
+        cache.initialize_repository(repository)
 
         local repository_path = git_parser.get_backup_repository_path(payload.path)
 
@@ -50,40 +48,37 @@ local function _collect(payload)
             ) or {}
         )
         do
-            if cache.GIT_COMMIT_CACHE[repository][commit] == nil
-            then
-                cache.GIT_COMMIT_CACHE[repository][commit] = {}
-            end
+            cache.initialize_commit(repository, commit)
 
             local get_datetime = function()
-                if cache.GIT_COMMIT_CACHE[repository][commit]["datetime"] ~= nil
-                then
-                    return cache.GIT_COMMIT_CACHE[repository][commit]["datetime"]
-                end
-
-                local unix_epoch = git_parser.get_commit_datetime(commit, repository)
-
-                if unix_epoch == nil
-                then
-                    return nil
-                end
-
-                local datetime = date_mate.get_datetime_with_timezone(unix_epoch)
-
-                cache.GIT_COMMIT_CACHE[repository][commit]["datetime"] = datetime
-
-                return cache.GIT_COMMIT_CACHE[repository][commit]["datetime"]
+                return cache.get_cached_commit(repository, commit):get_author_date()
             end
 
-            local is_computed = cache.GIT_COMMIT_CACHE[repository][commit]["is_notes_computed"]
-            local notes = cache.GIT_COMMIT_CACHE[repository][commit]["notes"]
+            local details
 
-            if not is_computed
+            if cache.has_cached_commit(repository, commit)
             then
-                notes = git_parser.get_notes(repository, commit)
-                cache.GIT_COMMIT_CACHE[repository][commit]["notes"] = notes
-                cache.GIT_COMMIT_CACHE[repository][commit]["is_notes_computed"] = true
+                details = cache.get_cached_commit(repository, commit)
+            else
+                details = git_commit.get_commit_details(commit, repository)
+                cache.set_cached_commit(repository, commit, details)
             end
+
+            if details == nil
+            then
+                vim.api.nvim_err_writeln(
+                    string.format(
+                        'Commit "%s" from "%s" repository could not be parsed. '
+                        .. 'Cannot continue.',
+                        commit,
+                        repository
+                    )
+                )
+
+                return {}
+            end
+
+            local notes = details:get_notes()
 
             local source_type = constant.SourceTypes.git_commit
             local record_type = nil
