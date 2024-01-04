@@ -45,9 +45,6 @@ local function _collect(payload, icon)
     for _, commit in ipairs(commits)
     do
         local get_datetime = function()
-            -- print('DEBUGPRINT[7]: git.lua:55: commit=' .. vim.inspect(commit))
-            -- print(vim.inspect(cache.get_cached_commit(repository, commit)))
-
             return cache.get_cached_commit(repository, commit):get_author_date()
         end
 

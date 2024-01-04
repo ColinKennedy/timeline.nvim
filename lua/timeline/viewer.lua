@@ -66,7 +66,7 @@ local function _add_datetime_virtual_text(buffer, namespace)
         )[vim.fn.line(".")],
     }
 
-    if records == nil
+    if records == nil or vim.tbl_isempty(records)
     then
         return
     end

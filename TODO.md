@@ -1,40 +1,6 @@
-Fix this error
-```
-Error detected while processing CursorMoved Autocommands for "<buffer=85>":
-Error executing lua callback: ...config/nvim/bundle/timeline.nvim/lua/timeline/viewer.lua:86: Invalid chunk: expected Array wi
-th 1 or 2 Strings
-stack traceback:
-        [C]: in function 'nvim_buf_set_extmark'
-        ...config/nvim/bundle/timeline.nvim/lua/timeline/viewer.lua:86: in function '_add_datetime_virtual_text'
-        ...config/nvim/bundle/timeline.nvim/lua/timeline/viewer.lua:110: in function <...config/nvim/bundle/timeline.nvim/lua/
-timeline/viewer.lua:108>
-```
-
-
-
-git show -s --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B%N -z ae4b03dc
-selecaotwo@localhost:~/.vim_custom_backups$ git show -s --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B%N -z ae4b03dc
-
-ae4b03dcfe36495615a2c777902315f2f48835eb
-timeline.nvim
-timeline.nvim@noemail.com
-1704257943
-1704257943
-f27b800053f63203de5183a20620d1753f2dd6bf
-Updated file
-{"record_type": "file_save", "timeline_version": [1, 0, 0]}
-
-hash: ` ${ref}`.substr(1),
-message: ` ${message}`.substr(1),
-parents: parents ? parents.split(' ') : [],
-authorDate: new Date(Number(authorDate) * 1000),
-authorName: ` ${authorName}`.substr(1),
-authorEmail: ` ${authorEmail}`.substr(1),
-commitDate: new Date(Number(commitDate) * 1000),
-refNames: refNames.split(',').map(s => s.trim()),
-shortStat: shortStat ? parseGitDiffShortStat(shortStat) : undefined
-
-
+- Allow missing source repositories in code. Make sure it doesn't error in the
+  unittests (a source repository that has never been saved before is not an
+  error)
 - Add unittests
 - Git commits / File Save
    - Add "View This"
@@ -279,9 +245,6 @@ refresh = {
 - Visual mode Timeline View unittest - make sure that it works for all visual modes
 - Allow users to save Undo / Redo only on-file-save, if they want
 - Make configuration options more flexible (allow string, table, function, etc)
-- Allow missing source repositories in code. Make sure it doesn't error in the
-  unittests (a source repository that has never been saved before is not an
-  error)
 - If "git init" is slow for making the global git repository, consider doing it
   during setup() instead of the backup function
 - Handle "commit missing" issues. A commit might get rebased away and it should
