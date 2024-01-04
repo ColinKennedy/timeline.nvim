@@ -96,7 +96,7 @@ function M.view_window(source_window)
     local timeline_buffer, timeline_window = unpack(_create_viewer())
     local height = vim.api.nvim_win_get_height(timeline_window)
     local offset = 0
-    local payload = request.Request:new(path, height, offset, source_window)
+    local payload = request.Request:new(path, height * 2, offset, source_window)
 
     local records = {}
 
