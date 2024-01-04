@@ -10,8 +10,9 @@
 --- @module 'timeline._core.components.action_triage'
 ---
 
-local tabler = require("timeline._core.vim_utilities.tabler")
+local floating_window = require("timeline._core.actions.floating_window")
 local record_ = require("timeline._core.components.record")
+local tabler = require("timeline._core.vim_utilities.tabler")
 
 local M = {}
 
@@ -237,7 +238,7 @@ end
 --- @param timeline_buffer number
 ---     A 0-or-more ID pointing to the Timeline View.
 --- @param source_buffer number
----     A 0-or-more ID pointing to a paired buffer This buffer's window might
+---     A 0-or-more ID pointing to a paired buffer. This buffer's window might
 ---     have its window overwritten in the process. If there's no window containing
 ---     `source_buffer`, the diff action typically creates 2 new windows for the diff.
 ---
@@ -271,6 +272,45 @@ function M.run_show_diff_action(timeline_buffer, source_buffer)
 end
 
 
+--- Open the details of the git commit at the current Timeline View selection.
+---
+--- Important:
+---     Currently this function can only run on one commit at a time.
+---
+--- @param timeline_buffer number
+---     A 0-or-more ID pointing to the Timeline View.
+--- @param source_buffer number
+---     A 0-or-more ID pointing to a paired buffer.
+---
+function M.run_show_git_action(timeline_buffer, source_buffer)
+    local start_record, end_record = unpack(_get_records_range(timeline_buffer))
+
+    if start_record == nil or end_record == nil
+    then
+        local name = vim.fn.bufname(source_buffer) or source_buffer
+
+        vim.api.nvim_err_writeln(
+            string.format('Buffer "%s" has no records. Cannot diff.', name)
+        )
+
+        return
+    end
+
+    if start_record ~= end_record
+    then
+        vim.api.nvim_err_writeln(
+            string.format("Please select only one record at a time to restore.")
+        )
+
+        return
+    end
+
+    floating_window.show_git_details_under_cursor(
+        start_record:get_details().git_commit_details
+    )
+end
+
+
 --- Open a debugging view for the selected Records.
 ---
 --- Important:
@@ -280,9 +320,7 @@ end
 --- @param timeline_buffer number
 ---     A 0-or-more ID pointing to the Timeline View.
 --- @param source_buffer number
----     A 0-or-more ID pointing to a paired buffer This buffer's window might
----     have its window overwritten in the process. If there's no window containing
----     `source_buffer`, the diff action typically creates 2 new windows for the diff.
+---     A 0-or-more ID pointing to a paired buffer.
 ---
 function M.run_show_manifest_action(timeline_buffer, source_buffer)
     local start_record, end_record = unpack(_get_records_range(timeline_buffer))

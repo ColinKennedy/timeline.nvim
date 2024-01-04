@@ -175,6 +175,7 @@ local function _collect(payload)
                             details=function()
                                 return {
                                     git_commit = commit,
+                                    git_commit_details = cache.get_cached_commit(repository, commit),
                                     repository_path = repository_path,
                                     repository_root = repository,
                                 }

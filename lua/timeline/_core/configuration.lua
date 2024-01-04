@@ -65,6 +65,11 @@ M._DEFAULTS = {
             command = action_triage.run_show_diff_action,
             description = "Create a [d]iff of the 1+ records, if allowed.",
         },
+        show_git = {
+            key = "<leader>g",
+            command = action_triage.run_show_git_action,
+            description = "Show [g]it commit information for 1 record.",
+        },
         show_manifest = {
             key = "<leader>m",
             command = action_triage.run_show_manifest_action,

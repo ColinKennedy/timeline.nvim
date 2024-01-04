@@ -5,10 +5,12 @@
 - Git commits / File Save
    - Add "View This"
    - Add "Restore From This"
+- Add a floating window that shows the details of that commit
 - Add icon colors + configuration options
 - Add text color options
 - Check if I can auto-find a timezone
 
+vim.api.nvim_open_win(0, false, {relative='win', row=3, col=3, width=12, height=3})
 
 - Summary
     - Undo / Redo
@@ -36,9 +38,7 @@ TODO add screenshot
         - Allow users to exclude certain histories (security)
     - Hover popup - https://youtu.be/68mvuBXTsQ0?si=wQR9FhYKpBzossOZ&t=47 (K mapping, maybe?)
         - Allow arbitrary notes / tagging on data and show it here
-    - Code actions / right click (Select for compare)
-    - Compare previous
-    - Configuration options - allow users to configure what is saved (security)
+    - Configuration options - allow users to configure what is saved (for security reasons)
     - Maybe need to batch stuff together
     - Actions
         - If the user selects multiple lines in visual mode

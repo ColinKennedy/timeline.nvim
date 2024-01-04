@@ -44,6 +44,7 @@ function M.initialize_buffer_mappings(timeline, source)
     _add_mappings(timeline, source, configuration.DATA.mappings.open, { "n", "v" })
     _add_mappings(timeline, source, configuration.DATA.mappings.restore)
     _add_mappings(timeline, source, configuration.DATA.mappings.show_diff, { "n", "v" })
+    _add_mappings(timeline, source, configuration.DATA.mappings.show_git, { "n", "v" })
     _add_mappings(timeline, source, configuration.DATA.mappings.show_manifest)
     _add_mappings(timeline, source, configuration.DATA.mappings.view_this)
 end
