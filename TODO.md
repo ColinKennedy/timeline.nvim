@@ -1,3 +1,14 @@
+Visual mode - Fix!
+```
+Error detected while processing CursorMoved Autocommands for "<buffer=39>":
+Error executing lua callback: ...line.nvim/lua/timeline/_core/components/virtual_text.lua:129: Invalid chunk: expected Array w
+ith 1 or 2 Strings
+stack traceback:
+        [C]: in function 'nvim_buf_set_extmark'
+```
+
+- In relative datetime mode, the virtual text needs to update every second (at maximum) or whatever the last denomination was
+
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)
