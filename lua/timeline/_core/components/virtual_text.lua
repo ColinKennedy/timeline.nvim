@@ -20,36 +20,36 @@ local _VIRTUAL_TEXT_NAMESPACE = vim.api.nvim_create_namespace(
 
 --- Convert `seconds` to a "fuzzy" / "human-readable" datetime.
 ---
+--- @source https://www.reddit.com/r/lua/comments/18y6eol/comment/kg8x193
+---
 --- @param seconds number A 0-or-more value to convert.
 --- @return string # "2 days ago", "3 hours ago", etc.
 ---
 local function _get_relative_text(seconds)
-    denominations = {
-        [31536000] = "year",
-        [604800] = "week",
-        [86400] = "day",
-        [3600] = "hour",
-        [60] = "minute",
-    }
+    local minute = 60
+    local hour = 60 * minute
+    local day = 24 * hour
+    local year = 365 * day
 
-    local order = {31536000, 604800, 86400, 3600, 60}
-
-    for _, value in ipairs(order)
-    do
-        if seconds >= value
-        then
-            local label = denominations[value]
-
-            if seconds >= (value * 2)
-            then
-                label = label .. "s"  -- pluralize the text
-            end
-
-            return string.format("%s %s ago", math.floor(seconds / value), label)
-        end
+    if seconds < 2 then
+        return "just now"
+    elseif seconds < minute then
+        return string.format("%d seconds ago", seconds)
+    elseif seconds < 2 * minute then
+        return "a minute ago"
+    elseif seconds < hour then
+        return string.format("%d minutes ago", math.floor(seconds / minute))
+    elseif seconds < 2 * hour then
+        return "an hour ago"
+    elseif seconds < day then
+        return string.format("%d hours ago", math.floor(seconds / hour))
+    elseif seconds < 2 * day then
+        return "yesterday"
+    elseif seconds < year then
+        return string.format("%d days ago", math.floor(seconds / day))
+    else
+        return string.format("%d years ago", math.floor(seconds / year))
     end
-
-    return string.format("%s seconds ago", seconds)
 end
 
 
