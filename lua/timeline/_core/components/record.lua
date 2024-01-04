@@ -53,7 +53,7 @@ end
 ---     This function's expects that your current window is the Timeline Viewer.
 ---     TODO: In the future, make this based on window ID.
 ---
---- @param buffer A 0-or-more ID to the Timline Viewer.
+--- @param buffer number A 0-or-more ID to the Timline Viewer.
 --- @return Record[]? # The found record, if any.
 ---
 function M.get_selected_records(buffer)

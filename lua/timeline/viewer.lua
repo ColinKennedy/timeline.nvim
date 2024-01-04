@@ -6,20 +6,12 @@
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
 local keymap_manager = require("timeline._core.components.keymap_manager")
-local record_ = require("timeline._core.components.record")
 local request = require("timeline._core.components.request")
 local source_registry = require("timeline._core.components.source_registry")
 local tabler = require("timeline._core.vim_utilities.tabler")
+local virtual_text = require("timeline._core.components.virtual_text")
 
 local M = {}
-
-
-local _VIRTUAL_TEXT_GROUP = vim.api.nvim_create_augroup(
-    "TimelineViewVirtualTextGroup", { clear = true }
-)
-local _VIRTUAL_TEXT_NAMESPACE = vim.api.nvim_create_namespace(
-    "TimelineViewVirtualTextNamespace"
-)
 
 
 --- Place `records` onto `buffer`.
@@ -49,69 +41,6 @@ local function _apply_records_to_viewer(records, buffer)
     vim.api.nvim_buf_set_lines(buffer, 0, -1, false, lines)
     vim.api.nvim_buf_set_option(buffer, "modifiable", modifiable)
     vim.api.nvim_buf_set_var(buffer, constant.BUFFER_RECORDS_VARIABLE, records)
-end
-
-
---- Show virtual text at the current cursor line in `buffer`.
----
---- @param buffer number A 0-or-more ID to some buffer.
---- @param namespace number 1-or-more ID used for drawing the virtual text.
----
-local function _add_datetime_virtual_text(buffer, namespace)
-    -- TODO: Figure out how to call this with an explicit window ID
-    local records = record_.get_selected_records() or {
-        vim.api.nvim_buf_get_var(
-            buffer,
-            constant.BUFFER_RECORDS_VARIABLE
-        )[vim.fn.line(".")],
-    }
-
-    if records == nil or vim.tbl_isempty(records)
-    then
-        return
-    end
-
-    local line = vim.fn.line(".") - 1  -- Vim line is 1-or-more but we need 0-or-more
-
-    local start_column = 0
-    local start_line = line
-    local text_to_display = {}
-
-    for _, record in ipairs(records)
-    do
-        table.insert(text_to_display, record:get_datetime_text())
-    end
-
-    -- TODO: Figure out how to get comment colors to work
-    vim.api.nvim_buf_set_extmark(
-        buffer,
-        namespace,
-        start_line,
-        start_column,
-        {
-            virt_text = {text_to_display},
-            hl_group = "Comment",
-        }
-    )
-end
-
-
---- Update virtual text whenever the cursor changes in `buffer`.
----
---- @param buffer number A 0-or-more ID to some buffer.
----
-local function _apply_timeline_auto_commands(buffer)
-    vim.api.nvim_create_autocmd(
-        {"CursorMoved", "CursorMovedI"},
-        {
-            group = _VIRTUAL_TEXT_GROUP,
-            callback = function()
-                vim.api.nvim_buf_clear_namespace(buffer, _VIRTUAL_TEXT_NAMESPACE, 0, -1)
-                _add_datetime_virtual_text(buffer, _VIRTUAL_TEXT_NAMESPACE)
-            end,
-            buffer = buffer,
-        }
-    )
 end
 
 
@@ -186,7 +115,7 @@ function M.view_window(source_window)
 
     -- Create a new view and display the records
     _apply_records_to_viewer(records, timeline_buffer)
-    _apply_timeline_auto_commands(timeline_buffer)
+    virtual_text.apply_timeline_auto_commands(timeline_buffer)
     keymap_manager.initialize_buffer_mappings(timeline_buffer, source_buffer)
 end
 

@@ -250,6 +250,9 @@ refresh = {
 - Handle "commit missing" issues. A commit might get rebased away and it should
   be treated as ephemeral
 
+- Allow virtual text for the datetime to be relative (e.g. 30 seconds ago) etc
+    - It'd need to continuously update every so often
+
 - Do a revamp of "git notes"
     - I use them for timeline.nvim, internally, but other git repositories and
       users might want to be able to see their own notes. All methods like
