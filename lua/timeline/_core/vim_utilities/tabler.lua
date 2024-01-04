@@ -33,7 +33,7 @@ end
 --- Check if `expected_value` is in `array`.
 ---
 --- @param array table A list-like structure of values to check within.
---- @param expected_value object Something to find in `table`.
+--- @param expected_value ... Something to find in `table`.
 --- @return boolean # If `expected_value` was found, return `true`.
 ---
 function M.has_value(array, expected_value)
@@ -61,7 +61,7 @@ end
 
 --- Append all `items` to the end of `array`.
 ---
---- @param items object[] Values to add into `array`.
+--- @param items ...[] Values to add into `array`.
 --- @param array table A list-like structure of values to add into.
 ---
 function M.extend(items, array)
@@ -74,7 +74,7 @@ end
 
 --- Make a copy of `array` without any of `item_to_filter`.
 ---
---- @param item_to_filter object Something to exclude from the returned array.
+--- @param item_to_filter ... Something to exclude from the returned array.
 --- @param array table A list-like structure of values to check within.
 --- @return table # The generated copy of `array`, without any of `item_to_filter`.
 ---

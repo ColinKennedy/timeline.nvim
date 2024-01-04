@@ -58,7 +58,7 @@ end
 ---
 --- @param command string
 ---     Some CLI/terminal command. e.g. `"ls"`.
---- @param options table<string, object>
+--- @param options table<string, ...>
 ---     Options to include for the command. e.g. `{cwd="/path/to/somewhere"}`.kj
 --- TODO: Fix this return type
 --- @return table<boolean, string[], string[]>

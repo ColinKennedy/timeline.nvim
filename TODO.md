@@ -273,6 +273,11 @@ refresh = {
 - Handle "commit missing" issues. A commit might get rebased away and it should
   be treated as ephemeral
 
+- Do a revamp of "git notes"
+    - I use them for timeline.nvim, internally, but other git repositories and
+      users might want to be able to see their own notes. All methods like
+      Details:get_notes() should be renamed to something more explicit like
+      Details:get_timeline_notes() to disambiguate them
 
 ```json
 {

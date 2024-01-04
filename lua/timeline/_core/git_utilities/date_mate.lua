@@ -1,4 +1,4 @@
---- A generic set of funtions to make dealing with datetime objects easier.
+--- A generic set of functions to make dealing with datetime objects easier.
 ---
 --- @module 'timeline._core.git_utilities.date_mate'
 ---
