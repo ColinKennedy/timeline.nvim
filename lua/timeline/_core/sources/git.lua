@@ -50,6 +50,8 @@ local function _collect(payload, icon)
             return cache.get_cached_commit(repository, commit):get_author_date()
         end
 
+        local details
+
         if cache.has_cached_commit(repository, commit)
         then
             details = cache.get_cached_commit(repository, commit)
