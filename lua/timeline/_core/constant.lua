@@ -19,5 +19,8 @@ M.SourceTypes = {
 }
 M.VIEWER_FILE_TYPE = "timeline_viewer"
 
+-- TODO: Add docstring for this
+M.GIT_DETAILS_FORMAT = "git show --no-patch --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%N%n%B -z"
+
 
 return M

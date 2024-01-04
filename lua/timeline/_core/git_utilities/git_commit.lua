@@ -45,6 +45,76 @@ local function _parse_git_note(text)
 end
 
 
+--- Make a new instance of GitCommitDetails using `data`.
+---
+--- @param data table<string, ...>
+---     The converted data from `_convert_from_raw_git_show`.
+--- @return GitCommitDetails
+---     The created, new instance.
+---
+function M.Details:new_from_data(data)
+    local self = setmetatable({}, { __index = M.Details })
+
+    self._author = data.author
+    self._commit = data.commit
+    self._email = data.email
+    self._message = data.message
+    self._notes = data.notes
+    self._parents = data.parents
+
+    self._author_date = data.author_date
+    self._commit_date = data.commit_date
+
+    self._short_stat = data.short_stat
+
+    return self
+end
+
+
+--- @return luatz.timetable # The first date-time which this commit was authored.
+function M.Details:get_author_date()
+    return self._author_date
+end
+
+
+--- @return table<string, ...>? # Any timeline.nvim-related metadata for the commit.
+function M.Details:get_notes()
+    return self._notes
+end
+
+
+-- TODO: Do I still need this? Figure out if I can delete it
+--- Query and parse all of the details of `commit` in `repository`.
+---
+--- @param commit string
+---     Some git commit hash to check from. e.g. `"a93afa9"`.
+--- @param repository string
+---     An absolute path to some git repository. e.g. `"~/.vim_custom_backups"`.
+--- @return GitCommitDetails?
+---     The created, new instance.
+---
+function M.get_commit_details(commit, repository)
+    local command = "git show --no-patch --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%N%n%B -z " .. commit
+    local success, stdout, _ = unpack(terminal.run(command, {cwd=repository}))
+
+    if not success
+    then
+        vim.api.nvim_err_writeln(
+            string.format(
+                'Git show command "%s" at directory "%s" failed to run with "%s".',
+                vim.inspect(stdout)
+            )
+        )
+
+        return nil
+    end
+
+    local data = M.convert_from_raw_git_show(stdout)
+
+    return M.Details:new_from_data(data)
+end
+
+
 -- TODO: Make sure that this parsing works even if 1. The git message is multi-line 2. The git note is multi-line
 --- Parse all of the `git show` details into a table of data.
 ---
@@ -56,7 +126,7 @@ end
 --- @return table<string, ...>
 ---     The converted data.
 ---
-local function _convert_from_raw_git_show(text)
+function M.convert_from_raw_git_show(text)
     local parents = {}
 
     for parent in string.gmatch(text[6], "([^ ]+)")
@@ -101,75 +171,6 @@ local function _convert_from_raw_git_show(text)
         parents = parents,
         ref_names = ref_names,
     }
-end
-
-
---- Make a new instance of GitCommitDetails using `data`.
----
---- @param data table<string, ...>
----     The converted data from `_convert_from_raw_git_show`.
---- @return GitCommitDetails
----     The created, new instance.
----
-function M.Details:new_from_data(data)
-    local self = setmetatable({}, { __index = M.Details })
-
-    self._author = data.author
-    self._commit = data.commit
-    self._email = data.email
-    self._message = data.message
-    self._notes = data.notes
-    self._parents = data.parents
-
-    self._author_date = data.author_date
-    self._commit_date = data.commit_date
-
-    self._short_stat = data.short_stat
-
-    return self
-end
-
-
---- @return luatz.timetable # The first date-time which this commit was authored.
-function M.Details:get_author_date()
-    return self._author_date
-end
-
-
---- @return table<string, ...>? # Any timeline.nvim-related metadata for the commit.
-function M.Details:get_notes()
-    return self._notes
-end
-
-
---- Query and parse all of the details of `commit` in `repository`.
----
---- @param commit string
----     Some git commit hash to check from. e.g. `"a93afa9"`.
---- @param repository string
----     An absolute path to some git repository. e.g. `"~/.vim_custom_backups"`.
---- @return GitCommitDetails?
----     The created, new instance.
----
-function M.get_commit_details(commit, repository)
-    local command = "git show --no-patch --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%N%n%B -z " .. commit
-    local success, stdout, _ = unpack(terminal.run(command, {cwd=repository}))
-
-    if not success
-    then
-        vim.api.nvim_err_writeln(
-            string.format(
-                'Git show command "%s" at directory "%s" failed to run with "%s".',
-                vim.inspect(stdout)
-            )
-        )
-
-        return nil
-    end
-
-    local data = _convert_from_raw_git_show(stdout)
-
-    return M.Details:new_from_data(data)
 end
 
 

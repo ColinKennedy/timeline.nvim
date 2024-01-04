@@ -6,6 +6,7 @@ local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
 local differ = require("timeline._core.actions.differ")
 local git_buffer = require("timeline._core.git_utilities.git_buffer")
+local git_cache = require("timeline._core.sources.middleware.git_cache")
 local git_commit = require("timeline._core.git_utilities.git_commit")
 local git_parser = require("timeline._core.git_utilities.git_parser")
 local record_ = require("timeline._core.components.record")
@@ -39,44 +40,22 @@ local function _collect(payload)
 
         local repository_path = git_parser.get_backup_repository_path(payload.path)
 
-        for _, commit in ipairs(
-            git_parser.get_latest_changes(
-                repository_path,
-                repository,
-                payload.offset,
-                payload.height + payload.offset
-            ) or {}
-        )
-        do
-            cache.initialize_commit(repository, commit)
+        local commits = git_parser.get_latest_changes(
+            repository_path,
+            repository,
+            payload.offset,
+            payload.height + payload.offset
+        ) or {}
 
+        git_cache.update_cache_for_commits(repository, commits)
+
+        for _, commit in ipairs(commits)
+        do
             local get_datetime = function()
                 return cache.get_cached_commit(repository, commit):get_author_date()
             end
 
-            local details
-
-            if cache.has_cached_commit(repository, commit)
-            then
-                details = cache.get_cached_commit(repository, commit)
-            else
-                details = git_commit.get_commit_details(commit, repository)
-                cache.set_cached_commit(repository, commit, details)
-            end
-
-            if details == nil
-            then
-                vim.api.nvim_err_writeln(
-                    string.format(
-                        'Commit "%s" from "%s" repository could not be parsed. '
-                        .. 'Cannot continue.',
-                        commit,
-                        repository
-                    )
-                )
-
-                return {}
-            end
+            local details = cache.get_cached_commit(repository, commit)
 
             local notes = details:get_notes()
 

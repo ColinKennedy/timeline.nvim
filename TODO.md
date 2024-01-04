@@ -1,3 +1,17 @@
+Fix this error
+```
+Error detected while processing CursorMoved Autocommands for "<buffer=85>":
+Error executing lua callback: ...config/nvim/bundle/timeline.nvim/lua/timeline/viewer.lua:86: Invalid chunk: expected Array wi
+th 1 or 2 Strings
+stack traceback:
+        [C]: in function 'nvim_buf_set_extmark'
+        ...config/nvim/bundle/timeline.nvim/lua/timeline/viewer.lua:86: in function '_add_datetime_virtual_text'
+        ...config/nvim/bundle/timeline.nvim/lua/timeline/viewer.lua:110: in function <...config/nvim/bundle/timeline.nvim/lua/
+timeline/viewer.lua:108>
+```
+
+
+
 git show -s --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B%N -z ae4b03dc
 selecaotwo@localhost:~/.vim_custom_backups$ git show -s --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B%N -z ae4b03dc
 
