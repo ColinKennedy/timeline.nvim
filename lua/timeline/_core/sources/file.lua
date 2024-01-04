@@ -154,22 +154,7 @@ local function _collect(payload)
                                     end,
                                 }
                             end,
-                            datetime_number=function()
-                                return get_datetime():timestamp()
-                            end,
-                            datetime_text=function()
-                                local datetime = get_datetime()
-
-                                if datetime == nil
-                                then
-                                    return "<No datetime found>"
-                                end
-
-                                return datetime:strftime(
-                                    configuration.DATA.timeline_window.datetime.format
-                                )
-                            end,
-                            -- TODO: Add this, later
+                            datetime = get_datetime,
                             details=function()
                                 return {
                                     git_commit = commit,

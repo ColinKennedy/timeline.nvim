@@ -79,29 +79,7 @@ local function _collect(payload, icon)
                             end,
                         }
                     end,
-                    datetime_number=function()
-                        local datetime = get_datetime()
-
-                        if datetime == nil
-                        then
-                            return -1
-                        end
-
-                        return datetime:timestamp()
-                    end,
-                    datetime_text=function()
-                        -- TODO: Add caching
-                        local datetime = get_datetime()
-
-                        if datetime == nil
-                        then
-                            return "<No datetime found>"
-                        end
-
-                        return datetime:strftime(
-                            configuration.DATA.timeline_window.datetime.format
-                        )
-                    end,
+                    datetime = get_datetime,
                     -- TODO: Add this, later
                     details=function()
                         return {

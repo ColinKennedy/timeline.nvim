@@ -109,7 +109,7 @@ function M.view_window(source_window)
     table.sort(
         records,
         function(left, right)
-            return left:get_datetime_number() > right:get_datetime_number()
+            return left:get_datetime():timestamp() > right:get_datetime():timestamp()
         end
     )
 

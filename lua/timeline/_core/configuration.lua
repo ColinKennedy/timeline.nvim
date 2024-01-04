@@ -95,6 +95,7 @@ M._DEFAULTS = {
         datetime = {
             format = "%Y-%m-%d %H:%M:%S",
             -- timezone = "America/Los_Angeles",
+            relative_virtual_text = true,
         }
         -- TODO: Add window defaults (width [percentage, fixed width, etc])
         -- size = "%20",
