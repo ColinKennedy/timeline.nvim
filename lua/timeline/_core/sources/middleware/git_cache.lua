@@ -46,6 +46,8 @@ local function _parse_all_commits(commits, repository)
     do
         if vim.tbl_isempty(lines)
         then
+            -- TODO: Consider storing the whole commit
+
             -- `git show` tends to display the full commit hash. We only need
             -- the first 7 characters
             --
