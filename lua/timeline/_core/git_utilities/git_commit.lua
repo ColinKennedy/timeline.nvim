@@ -83,38 +83,6 @@ function M.Details:get_notes()
 end
 
 
--- TODO: Do I still need this? Figure out if I can delete it
---- Query and parse all of the details of `commit` in `repository`.
----
---- @param commit string
----     Some git commit hash to check from. e.g. `"a93afa9"`.
---- @param repository string
----     An absolute path to some git repository. e.g. `"~/.vim_custom_backups"`.
---- @return GitCommitDetails?
----     The created, new instance.
----
-function M.get_commit_details(commit, repository)
-    local command = "git show --no-patch --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%N%n%B -z " .. commit
-    local success, stdout, _ = unpack(terminal.run(command, {cwd=repository}))
-
-    if not success
-    then
-        vim.api.nvim_err_writeln(
-            string.format(
-                'Git show command "%s" at directory "%s" failed to run with "%s".',
-                vim.inspect(stdout)
-            )
-        )
-
-        return nil
-    end
-
-    local data = M.convert_from_raw_git_show(stdout)
-
-    return M.Details:new_from_data(data)
-end
-
-
 -- TODO: Make sure that this parsing works even if 1. The git message is multi-line 2. The git note is multi-line
 --- Parse all of the `git show` details into a table of data.
 ---
