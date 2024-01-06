@@ -69,7 +69,7 @@ end
 function M.get_latest_changes(path, repository, start_index, end_index)
     -- Reference: https://www.reddit.com/r/git/comments/18u7e7s/comment/kfjb9fl/?utm_source=share&utm_medium=web2x&context=3
     local command = string.format(
-        'git --no-pager log --skip=%s --max-count=%s --pretty=format:"%%h" -- \'%s\'',
+        'git --no-pager log --skip=%s --max-count=%s --pretty=format:"%%H" -- \'%s\'',
         start_index - 1,
         end_index - start_index - 1,
         path
