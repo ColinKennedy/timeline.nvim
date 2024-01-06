@@ -102,7 +102,7 @@ function M.view_window(source_window)
 
     for _, source in ipairs(source_registry.SOURCES)
     do
-        tabler.extend(source:collect(payload), records)
+        tabler.extend(records, source:collect(payload))
     end
 
     -- Interleave the records by their date

@@ -195,7 +195,7 @@ end
 function M.Source:collect(payload)
     local results = base.Source.collect(self, payload)
 
-    tabler.extend(_collect(payload), results)
+    tabler.extend(results, _collect(payload))
 
     return results
 end

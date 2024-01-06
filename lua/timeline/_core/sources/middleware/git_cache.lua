@@ -8,6 +8,7 @@ local constant = require("timeline._core.constant")
 local git_commit = require("timeline._core.git_utilities.git_commit")
 local tabler = require("timeline._core.vim_utilities.tabler")
 local terminal = require("timeline._core.vim_utilities.terminal")
+local text_mate = require("timeline._core.vim_utilities.text_mate")
 
 local M = {}
 
@@ -44,14 +45,10 @@ local function _parse_all_commits(commits, repository)
 
     for _, line in ipairs(stdout)
     do
-        if vim.tbl_isempty(lines)
+        if current_commit == nil and not text_mate.is_empty(line)
         then
-            -- TODO: Consider storing the whole commit
-
-            -- `git show` tends to display the full commit hash. We only need
-            -- the first 8 characters
-            --
-            current_commit = line:sub(1, 8)
+            -- We assume that the first non-empty line is the commit hash
+            current_commit = line
         end
 
         if line == constant.GIT_DETAILS_LINE_ENDER
@@ -62,6 +59,7 @@ local function _parse_all_commits(commits, repository)
 
             -- Reset the `lines` so (if needed) we are ready another round of parsing
             lines = {}
+            current_commit = nil
         else
             table.insert(lines, line)
         end

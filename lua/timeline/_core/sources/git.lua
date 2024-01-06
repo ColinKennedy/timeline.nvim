@@ -119,7 +119,7 @@ end
 function M.Source:collect(payload)
     local results = base.Source.collect(self, payload)
 
-    tabler.extend(_collect(payload, configuration.DATA.records.git_commit.icon), results)
+    tabler.extend(results, _collect(payload, configuration.DATA.records.git_commit.icon))
 
     return results
 end

@@ -73,10 +73,8 @@ function M.run(command, options)
     options = vim.tbl_deep_extend(
         "keep",
         {
-            on_stderr=function(_, data, _) tabler.extend(data, stdout) end,
-            on_stdout=function(_, data, _)
-                tabler.extend(data, stdout)
-            end,
+            on_stderr=function(_, data, _) tabler.extend(stderr, data) end,
+            on_stdout=function(_, data, _) tabler.extend(stdout, data) end,
         },
         options
     )
