@@ -49,12 +49,12 @@ local function _parse_all_commits(commits, repository)
             -- TODO: Consider storing the whole commit
 
             -- `git show` tends to display the full commit hash. We only need
-            -- the first 7 characters
+            -- the first 8 characters
             --
-            current_commit = line:sub(1, 7)
+            current_commit = line:sub(1, 8)
         end
 
-        if line == "\n"
+        if line == constant.GIT_DETAILS_LINE_ENDER
         then
             -- We've reached the end of an entry.
             local triaged = git_commit.convert_from_raw_git_show(tabler.copy(lines))
