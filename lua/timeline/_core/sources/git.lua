@@ -1,3 +1,11 @@
+--- The main module for reading "local" git repository data for files.
+---
+--- This is pretty much just local git commit records, maybe some other rarer
+--- record types, and nothing else.
+---
+--- @module 'timeline._core.sources.git'
+---
+
 local base = require("timeline._core.sources.base")
 local cache = require("timeline._core.components.cache")
 local configuration = require("timeline._core.configuration")
@@ -15,6 +23,15 @@ local M = {}
 M.Source = base.Source:new()
 
 
+--- Parse `payload` for timeline.nvim records.
+---
+--- @param payload Request
+---     A description of how many records to collect, starting from which index, etc.
+--- @param icon string
+---     A character which will display along with each found Record.
+--- @return Record[]
+---     The found records, if any.
+---
 local function _collect(payload, icon)
     local output = {}
 
@@ -111,11 +128,19 @@ local function _collect(payload, icon)
 end
 
 
+--- @return string A description of where some record was found.
 function M.Source:get_type()
     return constant.SourceTypes.git
 end
 
 
+--- Parse `payload` for timeline.nvim records.
+---
+--- @param payload Request
+---     A description of how many records to collect, starting from which index, etc.
+--- @return Record[]
+---     The found records, if any.
+---
 function M.Source:collect(payload)
     local results = base.Source.collect(self, payload)
 
@@ -125,6 +150,7 @@ function M.Source:collect(payload)
 end
 
 
+--- @return Source # Create a new instance.
 function M.Source:new()
     local instance = base.Source:new(instance)
     setmetatable(instance, self)

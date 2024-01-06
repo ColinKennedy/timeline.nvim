@@ -1,4 +1,11 @@
--- TODO: Add docstrings
+--- The main module for reading "global" git repository data for files.
+---
+--- In timeline.nvim's terminology, "global" means "any record / change that we
+--- want to track but not in the user's local git repository". That's going to be
+--- the majority of records.
+---
+--- @module 'timeline._core.sources.git'
+---
 
 local base = require("timeline._core.sources.base")
 local cache = require("timeline._core.components.cache")
@@ -18,16 +25,30 @@ local M = {}
 M.Source = base.Source:new()
 
 
+--- Find a human-readable label to describe `record_type`.
+---
+--- @param record_type string
+---     A description of the Record (what it does, what it's meant for, etc).
+--- @return string
+---     The found label, if any.
+---
 local function _get_label_from_type(record_type)
     local labels = {
         file_save = "File Save",
         undo_redo = "Undo / Redo",
     }
 
-    return labels[record_type]
+    return labels[record_type] or "<No Label could be found>"
 end
 
 
+--- Parse `payload` for timeline.nvim records.
+---
+--- @param payload Request
+---     A description of how many records to collect, starting from which index, etc.
+--- @return Record[]
+---     The found records, if any.
+---
 local function _collect(payload)
     local output = {}
 
@@ -187,11 +208,19 @@ local function _collect(payload)
 end
 
 
+--- @return string A description of where some record was found.
 function M.Source:get_type()
     return constant.SourceTypes.file
 end
 
 
+--- Parse `payload` for timeline.nvim records.
+---
+--- @param payload Request
+---     A description of how many records to collect, starting from which index, etc.
+--- @return Record[]
+---     The found records, if any.
+---
 function M.Source:collect(payload)
     local results = base.Source.collect(self, payload)
 
@@ -201,6 +230,7 @@ function M.Source:collect(payload)
 end
 
 
+--- @return Source # Create a new instance.
 function M.Source:new()
     local instance = base.Source:new(instance)
     setmetatable(instance, self)
