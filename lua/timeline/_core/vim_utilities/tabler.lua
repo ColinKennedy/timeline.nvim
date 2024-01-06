@@ -61,10 +61,10 @@ end
 
 --- Append all `items` to the end of `array`.
 ---
---- @param items ...[] Values to add into `array`.
 --- @param array table A list-like structure of values to add into.
+--- @param items ...[] Values to add into `array`.
 ---
-function M.extend(items, array)
+function M.extend(array, items)
     for _, item in ipairs(items)
     do
         table.insert(array, item)
