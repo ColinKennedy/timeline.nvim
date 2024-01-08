@@ -5,6 +5,7 @@
 
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
+local floating_window = require("timeline._core.actions.floating_window")
 local keymap_manager = require("timeline._core.components.keymap_manager")
 local request = require("timeline._core.components.request")
 local source_registry = require("timeline._core.components.source_registry")
@@ -116,6 +117,7 @@ function M.view_window(source_window)
     -- Create a new view and display the records
     _apply_records_to_viewer(records, timeline_buffer)
     virtual_text.apply_timeline_auto_commands(timeline_buffer)
+    floating_window.apply_timeline_auto_commands(timeline_buffer)
 
     if configuration.DATA.timeline_window.datetime.relative_virtual_text
     then

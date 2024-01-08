@@ -7,6 +7,11 @@
 
 local M = {}
 
+local _FLOATING_WINDOW_GROUP = vim.api.nvim_create_augroup(
+    "TimelineViewFloatingWindowGroup", { clear = true }
+)
+local _GIT_DETAILS_WINDOW_IDENTIFIER = nil
+
 
 --- Find the line that has the most characters from `lines`.
 ---
@@ -30,6 +35,49 @@ local function _get_maximum_length(lines)
 end
 
 
+--- Apply auto-commands to the Timeline Viewer buffer.
+---
+--- This floating window is intended to only ever be open once at any time.
+--- These auto-commands ensure that is is always the case.
+---
+--- @param buffer number A 0-or-more value indicating Timeline Viewer.
+---
+function M.apply_timeline_auto_commands(buffer)
+    vim.api.nvim_create_autocmd(
+        {"BufDelete"},
+        {
+            buffer = buffer,
+            callback = M.close_git_details_window_if_needed,
+            group = _FLOATING_WINDOW_GROUP,
+        }
+    )
+
+    vim.api.nvim_create_autocmd(
+        {"CursorMoved", "CursorMovedI", "WinClosed"},
+        {
+            buffer = buffer,
+            callback = M.close_git_details_window_if_needed
+                -- TODO: If no more windows are open that contain buffer, close it
+                M.close_git_details_window_if_needed()
+            end,
+            group = _FLOATING_WINDOW_GROUP,
+        }
+    )
+end
+
+
+--- If the window is open, close it.
+---
+--- This floating window is intended to only ever be open once at any time.
+---
+function M.close_git_details_window_if_needed()
+    if _GIT_DETAILS_WINDOW_IDENTIFIER ~= nil
+    then
+        vim.api.nvim_win_close(_GIT_DETAILS_WINDOW_IDENTIFIER, true)
+    end
+end
+
+
 --- Create a floating window for `details`.
 ---
 --- @source https://www.statox.fr/posts/2021/03/breaking_habits_floating_window
@@ -38,6 +86,8 @@ end
 --- @param details GitCommitDetails Pre-computed git commit data to display.
 ---
 function M.show_git_details_under_cursor(details)
+    M.close_git_details_window_if_needed()
+
     local author = details:get_author()
     local commit = details:get_commit()
 
@@ -71,6 +121,8 @@ function M.show_git_details_under_cursor(details)
         false,
         {relative="cursor", row=0, col=0, width=width + padding, height=#lines}
     )
+
+    _GIT_DETAILS_WINDOW_IDENTIFIER = floating_window
 end
 
 

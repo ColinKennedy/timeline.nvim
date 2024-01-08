@@ -23,6 +23,8 @@ stack traceback:
 - Add icon colors + configuration options
 - Add text color options
 
+- Make sure autocmds get deregistered when the buffer is deleted
+
 vim.api.nvim_open_win(0, false, {relative='win', row=3, col=3, width=12, height=3})
 
 - Summary
