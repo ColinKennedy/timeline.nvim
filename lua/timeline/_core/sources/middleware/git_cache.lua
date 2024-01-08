@@ -34,7 +34,9 @@ local function _parse_all_commit_lines(all_lines)
         if line == constant.GIT_DETAILS_LINE_ENDER
         then
             -- We've reached the end of an entry.
-            local triaged = git_commit.convert_from_raw_git_show(tabler.copy(lines))
+            local triaged = git_commit.convert_from_raw_git_show(
+                tabler.copy(tabler.lstrip(lines))
+            )
             local details = git_commit.Details:new_from_data(triaged)
 
             output[current_commit] = details

@@ -76,7 +76,6 @@ local function _collect(payload)
             end
 
             local details = cache.get_cached_commit(repository, commit)
-
             local notes = details:get_notes()
 
             local source_type = constant.SourceTypes.git_commit

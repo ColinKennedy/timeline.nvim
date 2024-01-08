@@ -113,4 +113,28 @@ function M.slice(array, first, last, step)
 end
 
 
+--- Get a subset of `array` that has no leading spaces.
+---
+--- @param array table A list-like structure of values to check within.
+--- @return table # A subarray copy of `array`.
+---
+function M.lstrip(array)
+    local sliced = {}
+    local index = 1
+
+    for _, item in ipairs(array)
+    do
+        if item ~= ""
+        then
+            -- Found the first non-empty data
+            break
+        end
+
+        index = index + 1
+    end
+
+    return M.slice(array, index)
+end
+
+
 return M
