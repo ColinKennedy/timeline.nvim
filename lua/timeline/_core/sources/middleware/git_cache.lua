@@ -13,6 +13,44 @@ local text_mate = require("timeline._core.vim_utilities.text_mate")
 local M = {}
 
 
+--- Split `all_lines` by each git commit.
+---
+--- @param all_lines string[] Raw `git show` text.
+--- @return table<string, GitCommitDetails> # The parsed git data, if any.
+---
+local function _parse_all_commit_lines(all_lines)
+    local lines = {}
+    local current_commit = nil
+    local output = {}
+
+    for _, line in ipairs(all_lines)
+    do
+        if current_commit == nil and not text_mate.is_empty(line)
+        then
+            -- We assume that the first non-empty line is the commit hash
+            current_commit = line
+        end
+
+        if line == constant.GIT_DETAILS_LINE_ENDER
+        then
+            -- We've reached the end of an entry.
+            local triaged = git_commit.convert_from_raw_git_show(tabler.copy(lines))
+            local details = git_commit.Details:new_from_data(triaged)
+
+            output[current_commit] = details
+
+            -- Reset the `lines` so (if needed) we are ready another round of parsing
+            lines = {}
+            current_commit = nil
+        else
+            table.insert(lines, line)
+        end
+    end
+
+    return output
+end
+
+
 --- Read the contents of `commits` in `repository`.
 ---
 --- @param commits string[]
@@ -39,33 +77,7 @@ local function _parse_all_commits(commits, repository)
         return nil
     end
 
-    local lines = {}
-    local current_commit = nil
-    local output = {}
-
-    for _, line in ipairs(stdout)
-    do
-        if current_commit == nil and not text_mate.is_empty(line)
-        then
-            -- We assume that the first non-empty line is the commit hash
-            current_commit = line
-        end
-
-        if line == constant.GIT_DETAILS_LINE_ENDER
-        then
-            -- We've reached the end of an entry.
-            local triaged = git_commit.convert_from_raw_git_show(tabler.copy(lines))
-            output[current_commit] = git_commit.Details:new_from_data(triaged)
-
-            -- Reset the `lines` so (if needed) we are ready another round of parsing
-            lines = {}
-            current_commit = nil
-        else
-            table.insert(lines, line)
-        end
-    end
-
-    return output
+    return _parse_all_commit_lines(stdout)
 end
 
 
