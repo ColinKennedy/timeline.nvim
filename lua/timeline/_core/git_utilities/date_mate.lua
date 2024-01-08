@@ -19,16 +19,23 @@ local M = {}
 --- @return luatz.timetable # The generated object.
 ---
 function M.get_datetime_with_timezone(unix_epoch)
-    if configuration.DATA.timeline_window.datetime.timezone == nil
+    local timezone = configuration.DATA.timeline_window.datetime.timezone
+
+    if timezone == "auto"
     then
         -- The user didn't specify a timezone. Skip it
-        return luatz.timetable.new_from_timestamp(unix_epoch)
+        -- Reference: https://stackoverflow.com/a/36030419
+        --
+        local timezone_coefficient = tonumber(os.date("%z")) / 100
+        local auto_timezone_offset = timezone_coefficient * 60 * 60
+
+        return luatz.timetable.new_from_timestamp(unix_epoch + auto_timezone_offset)
+    elseif timezone == nil
+    then
+        return luatz.timetable.new_from_timestamp(unix_epoch + auto_timezone_offset)
     end
 
-    local unix_epoch_with_timezone_applied = luatz.time_in(
-        configuration.DATA.timeline_window.datetime.timezone,
-        unix_epoch
-    )
+    local unix_epoch_with_timezone_applied = luatz.time_in(timezone, unix_epoch)
 
     return luatz.timetable.new_from_timestamp(unix_epoch_with_timezone_applied)
 end

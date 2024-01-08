@@ -7,7 +7,7 @@ stack traceback:
         [C]: in function 'nvim_buf_set_extmark'
 ```
 
-- Add a pop-up window
+- Add a floating window that shows the details of that commit
 - In relative datetime mode, the virtual text needs to update every second (at maximum) or whatever the last denomination was
 
 - Allow missing source repositories in code. Make sure it doesn't error in the
@@ -16,10 +16,8 @@ stack traceback:
 - Add unittests
 - Git commits / File Save
    - Add "Restore From This"
-- Add a floating window that shows the details of that commit
 - Add icon colors + configuration options
 - Add text color options
-- Check if I can auto-find a timezone
 
 vim.api.nvim_open_win(0, false, {relative='win', row=3, col=3, width=12, height=3})
 

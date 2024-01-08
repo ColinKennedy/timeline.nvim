@@ -89,7 +89,7 @@ local function _get_datetime_display_text(records, relative)
             configuration.DATA.timeline_window.datetime.format
         )
 
-        table.insert(text_to_display, text)
+        table.insert(output, text)
     end
 
     return output
