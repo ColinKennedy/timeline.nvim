@@ -77,6 +77,24 @@ function M.Details:get_author_date()
 end
 
 
+--- @return string The full name of the git commit creator.
+function M.Details:get_author()
+    return self._author
+end
+
+
+--- @return string The git commit hash for this instance.
+function M.Details:get_commit()
+    return self._commit
+end
+
+
+--- @return string An address which can be used to contact the git commit creator.
+function M.Details:get_email()
+    return self._email
+end
+
+
 --- @return table<string, ...>? # Any timeline.nvim-related metadata for the commit.
 function M.Details:get_notes()
     return self._notes
