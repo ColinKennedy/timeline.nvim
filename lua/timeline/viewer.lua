@@ -116,6 +116,12 @@ function M.view_window(source_window)
     -- Create a new view and display the records
     _apply_records_to_viewer(records, timeline_buffer)
     virtual_text.apply_timeline_auto_commands(timeline_buffer)
+
+    if configuration.DATA.timeline_window.datetime.relative_virtual_text
+    then
+        virtual_text.apply_datetime_updater(timeline_buffer)
+    end
+
     keymap_manager.initialize_buffer_mappings(timeline_buffer, source_buffer)
 end
 

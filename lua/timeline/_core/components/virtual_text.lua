@@ -139,6 +139,41 @@ local function _add_datetime_virtual_text(buffer, namespace)
 end
 
 
+--- Create a function that clears and re-applies the Timeline Viewer virtual text.
+---
+--- @param buffer number A 0-or-more value indicating the Timeline Viewer buffer.
+---
+local function _make_callback(buffer)
+    return function()
+        vim.api.nvim_buf_clear_namespace(buffer, _VIRTUAL_TEXT_NAMESPACE, 0, -1)
+        _add_datetime_virtual_text(buffer, _VIRTUAL_TEXT_NAMESPACE)
+    end
+end
+
+
+--- Force-refresh the virtual text at Timeline Viewer `buffer` every second.
+---
+--- @param buffer number A 0-or-more value indicating the Timeline Viewer buffer.
+---
+function M.apply_datetime_updater(buffer)
+    local timer_identifier = vim.fn.timer_start(
+        1000,  -- Update every second
+        _make_callback(buffer),
+        { ["repeat"] = -1 }
+    )
+
+    vim.api.nvim_create_autocmd(
+        {"BufDelete"},
+        {
+            callback = function()
+                vim.fn.timer_stop(timer_identifier)
+            end,
+            group = _VIRTUAL_TEXT_GROUP,
+        }
+    )
+end
+
+
 --- Update virtual text whenever the cursor changes in `buffer`.
 ---
 --- @param buffer number A 0-or-more ID to some buffer.
@@ -147,12 +182,9 @@ function M.apply_timeline_auto_commands(buffer)
     vim.api.nvim_create_autocmd(
         {"CursorMoved", "CursorMovedI"},
         {
-            group = _VIRTUAL_TEXT_GROUP,
-            callback = function()
-                vim.api.nvim_buf_clear_namespace(buffer, _VIRTUAL_TEXT_NAMESPACE, 0, -1)
-                _add_datetime_virtual_text(buffer, _VIRTUAL_TEXT_NAMESPACE)
-            end,
             buffer = buffer,
+            callback = _make_callback(buffer),
+            group = _VIRTUAL_TEXT_GROUP,
         }
     )
 end
