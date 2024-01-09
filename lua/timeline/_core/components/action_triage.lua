@@ -382,7 +382,18 @@ function M.run_view_this_action(timeline_buffer, source_buffer)
         return
     end
 
-    start_record:get_actions().view_this(start_record)
+    local caller = start_record:get_actions().view_this
+
+    if caller == nil
+    then
+        vim.api.nvim_err_writeln(
+            string.format('Record "%s" has no View This action.', vim.inspect(start_record))
+        )
+
+        return
+    end
+
+    caller(start_record)
 end
 
 
