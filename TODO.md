@@ -12,6 +12,9 @@ stack traceback:
  - It should display properly
  - Give the window padding + a clean border around it
 
+- git.lua doesn't show a git message. Fix
+- Moving from the Timeline Viewer window to another window does not close the floating window
+- Don't show the Timeline Viewer as a listed buffer. And it should have a buffer name! (Right now it's listed as [No Name])
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)

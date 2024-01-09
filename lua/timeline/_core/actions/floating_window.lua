@@ -91,6 +91,7 @@ function M.show_git_details_under_cursor(details)
 
     local author = details:get_author()
     local commit = details:get_commit()
+    local message = details:get_message()
 
     -- TODO: Fix cyclic loop, later
     local configuration = require("timeline._core.configuration")
@@ -103,9 +104,15 @@ function M.show_git_details_under_cursor(details)
     local lines = {}
     table.insert(lines, string.format("Author: %s <%s>", author, email))
     table.insert(lines, string.format("Date: %s", datetime))
+
+    if message ~= nil and message ~= ""
+    then
+        table.insert(lines, "")
+        table.insert(lines, message)
+    end
+
     table.insert(lines, "")
-    table.insert(lines, details:get_message())
-    table.insert(lines, "")
+
     table.insert(lines, string.format("Commit: %s", commit))
 
     local buffer = vim.api.nvim_create_buf(false, true)
