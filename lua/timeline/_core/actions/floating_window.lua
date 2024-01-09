@@ -56,7 +56,7 @@ function M.apply_timeline_auto_commands(buffer)
         {"CursorMoved", "CursorMovedI", "WinClosed"},
         {
             buffer = buffer,
-            callback = M.close_git_details_window_if_needed
+            callback = function()
                 -- TODO: If no more windows are open that contain buffer, close it
                 M.close_git_details_window_if_needed()
             end,
@@ -74,6 +74,7 @@ function M.close_git_details_window_if_needed()
     if _GIT_DETAILS_WINDOW_IDENTIFIER ~= nil
     then
         vim.api.nvim_win_close(_GIT_DETAILS_WINDOW_IDENTIFIER, true)
+        _GIT_DETAILS_WINDOW_IDENTIFIER = nil
     end
 end
 
@@ -103,7 +104,8 @@ function M.show_git_details_under_cursor(details)
     table.insert(lines, string.format("Author: %s <%s>", author, email))
     table.insert(lines, string.format("Date: %s", datetime))
     table.insert(lines, "")
-    table.insert(lines, message)
+    table.insert(lines, details:get_message())
+    table.insert(lines, "")
     table.insert(lines, string.format("Commit: %s", commit))
 
     local buffer = vim.api.nvim_create_buf(false, true)
@@ -115,12 +117,17 @@ function M.show_git_details_under_cursor(details)
     vim.fn.matchadd("TimelineNvimGitCommitEmail", email)
 
     local width = _get_maximum_length(lines)
-    local padding = 5  -- TODO: Figure out if this is needed or just a personal issue
+    local padding = 1  -- TODO: Figure out if this is needed or just a personal issue
     local floating_window = vim.api.nvim_open_win(
         buffer,
         false,
         {relative="cursor", row=0, col=0, width=width + padding, height=#lines}
     )
+
+    vim.api.nvim_buf_set_option(buffer, "modifiable", false)
+    vim.api.nvim_win_set_option(floating_window, "signcolumn", "no")
+    vim.api.nvim_win_set_option(floating_window, "number", false)
+    vim.api.nvim_win_set_option(floating_window, "relativenumber", false)
 
     _GIT_DETAILS_WINDOW_IDENTIFIER = floating_window
 end

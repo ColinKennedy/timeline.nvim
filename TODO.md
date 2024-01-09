@@ -9,10 +9,8 @@ stack traceback:
 
 - Add a floating window that shows the details of that commit
  - Syntax highlighting
- - Make sure that only one can be posted at a given time
  - It should display properly
- - Give the window a clean border around it
-- In relative datetime mode, the virtual text needs to update every second (at maximum) or whatever the last denomination was
+ - Give the window padding + a clean border around it
 
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an

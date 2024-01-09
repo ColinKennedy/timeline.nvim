@@ -95,6 +95,12 @@ function M.Details:get_email()
 end
 
 
+--- @return string The user-provided details about what this commit represents.
+function M.Details:get_message()
+    return self._message
+end
+
+
 --- @return table<string, ...>? # Any timeline.nvim-related metadata for the commit.
 function M.Details:get_notes()
     return self._notes
