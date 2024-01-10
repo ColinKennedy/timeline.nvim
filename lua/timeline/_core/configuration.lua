@@ -84,10 +84,34 @@ M._DEFAULTS = {
     backup_repository_path = _BACKUP_DIRECTORY,
     source_repository_paths = {_BACKUP_DIRECTORY},
     records = {
-        [constant.RecordTypes.file_save] = { enabled = true, icon = "" },
-        [constant.RecordTypes.git_commit] = { enabled = true, icon = "󰜘" },
-        [constant.RecordTypes.restore] = { enabled = true, icon = "󰑏" },
-        [constant.RecordTypes.undo_redo] = { enabled = true, icon = "" },
+        [constant.RecordTypes.file_save] = {
+            enabled = true,
+            icon = {
+                style = {default=true, link="String"},
+                text = "",
+            },
+        },
+        [constant.RecordTypes.git_commit] = {
+            enabled = true,
+            icon = {
+                style = {default=true, link="Number"},
+                text = "󰜘",
+            },
+        },
+        [constant.RecordTypes.restore] = {
+            enabled = true,
+            icon = {
+                style = {default=true, link="Special"},
+                text = "󰑏",
+            },
+        },
+        [constant.RecordTypes.undo_redo] = {
+            enabled = true,
+            icon = {
+                style = {default=true, link="Special"},
+                text = "",
+            },
+        },
     },
     timeline_window = {
         size = 20,

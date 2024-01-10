@@ -92,7 +92,7 @@ local function _collect(payload)
             if configuration.DATA.records[record_type].enabled
             then
                 local label = _get_label_from_type(record_type)
-                local icon = configuration.DATA.records[record_type].icon
+                local icon = configuration.DATA.records[record_type].icon.text
 
                 table.insert(
                     output,

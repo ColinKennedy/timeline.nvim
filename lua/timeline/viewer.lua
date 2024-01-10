@@ -18,7 +18,7 @@ local M = {}
 --- Place `records` onto `buffer`.
 ---
 --- @param records Record[] The data to display in `buffer`.
---- @param buffer number A 0-or-more to be replaced by `records`.
+--- @param buffer number A 0-or-more Timeline Viewer to be replaced by `records`.
 ---
 local function _apply_records_to_viewer(records, buffer)
     local modifiable = vim.api.nvim_buf_get_option(buffer, "modifiable")
@@ -42,6 +42,15 @@ local function _apply_records_to_viewer(records, buffer)
     vim.api.nvim_buf_set_lines(buffer, 0, -1, false, lines)
     vim.api.nvim_buf_set_option(buffer, "modifiable", modifiable)
     vim.api.nvim_buf_set_var(buffer, constant.BUFFER_RECORDS_VARIABLE, records)
+
+    local namespace = 0
+
+    for record_name, record in pairs(configuration.DATA.records)
+    do
+        local name = string.format("Timeline%sIcon", record_name)
+        vim.cmd.syntax(string.format("match %s /%s/", name, record.icon.text))
+        vim.api.nvim_set_hl(namespace, name, record.icon.style)
+    end
 end
 
 
@@ -53,7 +62,7 @@ end
 local function _create_viewer()
     vim.cmd.vsplit()
     vim.cmd.enew()
-    vim.cmd.file(constant.VIEWER_FILE_NAME)
+    -- vim.cmd.file(constant.VIEWER_FILE_NAME)  -- TODO: Figure out how to add this back without duplicate buffer names being a problem
 
     vim.cmd("vertical resize " .. configuration.DATA.timeline_window.size)
 
