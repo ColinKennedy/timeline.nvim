@@ -120,7 +120,6 @@ function M.show_git_details_under_cursor(details)
 
     local original_buffer = vim.fn.bufnr()
     vim.cmd("buffer " .. buffer)
-    vim.cmd("syntax enable")
     vim.cmd.syntax(string.format("match TimelineNvimGitCommitAuthor /%s/", author))
     vim.cmd.syntax(string.format("match TimelineNvimGitCommitCommit /%s/", commit))
     vim.cmd.syntax(string.format("match TimelineNvimGitCommitDate /%s/", datetime))
