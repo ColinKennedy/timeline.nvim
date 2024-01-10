@@ -8,7 +8,7 @@ stack traceback:
 ```
 
 - The git commit timezone virtual text is incorrect. Fix
-- Add colors to the Timeline Viewer
+- Showing a file in a read-only mode should still be syntax highlighted
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)
@@ -19,8 +19,6 @@ stack traceback:
 - Add text color options
 
 - Make sure autocmds get deregistered when the buffer is deleted
-
-vim.api.nvim_open_win(0, false, {relative='win', row=3, col=3, width=12, height=3})
 
 - Summary
     - Undo / Redo
@@ -207,9 +205,6 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 ## TODO
 - Add FZF / Telescope integration when asking for a single record type.
   Otherwise, use Vim's built-in input function
-- Make sure the Lua files and everything seem natural
-- Figure out how to clean up the output of terminal.run
-- Ask Neovim maintainers how to make pop-ups show above multiple windows at once (floating)
 - Make the diff view better
     - You should be able to open, close, and reopen a diff
 - Make the differ better. As diffoff should remove everything and not keep any buffers
@@ -217,8 +212,6 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
     - https://www.reddit.com/r/neovim/comments/stcml3/patience_diff_algorithm/
     - https://github.com/neovim/neovim/pull/14537
 - Reduce the amount of closures used in the codebase
-- Docstrings: How do you represent "anything" in Lua docstrings? object doesn't work
-- Color-code the icons and record types
 - Add a raw git diff option like with this
     - https://asciinema.org/a/397390
     - https://github.com/afnanenayet/diffsitter
