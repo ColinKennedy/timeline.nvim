@@ -53,7 +53,7 @@ function M.apply_timeline_auto_commands(buffer)
     )
 
     vim.api.nvim_create_autocmd(
-        {"CursorMoved", "CursorMovedI", "WinClosed"},
+        {"CursorMoved", "CursorMovedI", "WinClosed", "WinLeave"},
         {
             buffer = buffer,
             callback = function()
@@ -131,7 +131,14 @@ function M.show_git_details_under_cursor(details)
     local floating_window = vim.api.nvim_open_win(
         buffer,
         false,
-        {relative="cursor", row=0, col=0, width=width + padding, height=#lines}
+        {
+            border="double",
+            relative="cursor",
+            row=0,
+            col=0,
+            width=width + padding,
+            height=#lines,
+        }
     )
 
     vim.api.nvim_buf_set_option(buffer, "modifiable", false)

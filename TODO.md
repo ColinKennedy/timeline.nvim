@@ -8,9 +8,7 @@ stack traceback:
 ```
 
 - Add a floating window that shows the details of that commit
- - Syntax highlighting
- - It should display properly
- - Give the window padding + a clean border around it
+ - make sure it closes when the cursor moves
 
 - git.lua doesn't show a git message. Fix
 - Moving from the Timeline Viewer window to another window does not close the floating window
