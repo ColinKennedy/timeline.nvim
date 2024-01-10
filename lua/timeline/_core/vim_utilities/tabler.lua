@@ -119,7 +119,6 @@ end
 --- @return table # A subarray copy of `array`.
 ---
 function M.lstrip(array)
-    local sliced = {}
     local index = 1
 
     for _, item in ipairs(array)
