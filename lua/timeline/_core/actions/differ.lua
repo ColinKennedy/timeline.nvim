@@ -60,10 +60,23 @@ local function _open_diff_commits(
         vim.cmd.vnew()
     end
 
-    git_buffer.make_read_only_view(path, repository, start_commit, start_stdout)
+    local first_buffer = git_buffer.make_read_only_view(
+        path,
+        repository,
+        start_commit,
+        start_stdout
+    )
+    vim.cmd.buffer(first_buffer)
     vim.cmd.diffthis()  -- Mark the first window to diff from
+
     vim.cmd.vnew()
-    git_buffer.make_read_only_view(path, repository, end_commit, end_stdout)
+    local last_buffer = git_buffer.make_read_only_view(
+        path,
+        repository,
+        end_commit,
+        end_stdout
+    )
+    vim.cmd.buffer(last_buffer)
     vim.cmd.diffthis()  -- Mark this last window to diff to
 end
 

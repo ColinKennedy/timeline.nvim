@@ -7,8 +7,19 @@ stack traceback:
         [C]: in function 'nvim_buf_set_extmark'
 ```
 
+
+When then I pressed <leader>d when there was no other window, this errored
+```
+E5108: Error executing lua: ...bundle/timeline.nvim/lua/timeline/_core/sources/file.lua:165: Expected Lua number
+stack traceback:
+        [C]: in function 'nvim_set_current_win'
+        ...bundle/timeline.nvim/lua/timeline/_core/sources/file.lua:165: in function 'caller'
+        ...ine.nvim/lua/timeline/_core/components/action_triage.lua:396: in function 'command'
+        ...ne.nvim/lua/timeline/_core/components/keymap_manager.lua:28: in function <...ne.nvim/lua/timeline/_core/components/
+keymap_manager.lua:27>
+```
+
 - The git commit timezone virtual text is incorrect. Fix
-- Showing a file in a read-only mode should still be syntax highlighted
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)

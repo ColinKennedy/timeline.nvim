@@ -97,18 +97,17 @@ local function _collect(payload, icon)
                             view_this = function(record)
                                 local window = payload.source_window
 
-                                if not vim.api.nvim_win_is_valid(window)
-                                then
-                                    window = nil
-                                end
-
                                 local text = git_parser.get_commit_text(
                                     repository_path,
                                     repository,
                                     commit
                                 )
 
-                                vim.api.nvim_set_current_win(window)
+                                if vim.api.nvim_win_is_valid(window)
+                                then
+                                    vim.api.nvim_set_current_win(window)
+                                end
+
                                 vim.cmd.enew()
 
                                 git_buffer.make_read_only_view(

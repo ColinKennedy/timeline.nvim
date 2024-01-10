@@ -17,13 +17,15 @@ local _GROUP = vim.api.nvim_create_augroup("TimelineGitBufferGroup", { clear = t
 --- @param repository string The root directory to some git repository.
 --- @param commit string A git repository commit ID to load `path` from.
 --- @param text string[] The text to populate the buffer.
+--- @return number # A 1-or-more value for the ID of the newly-created buffer.
 ---
 function M.make_read_only_view(path, repository, commit, text)
+    local buffer = vim.api.nvim_create_buf(false, true)
+
     -- This file name is a simple URI, since it's a snapshot in time and not a real file
     -- TODO: How do I open a buffer with syntax highlighting while still expressing that it's read-only?
     vim.cmd(string.format("file git_commit:%s:%s:%s", repository, commit, path))
 
-    local buffer = vim.fn.bufnr()
     vim.api.nvim_buf_set_lines(buffer, 0, -1, false, text)
     vim.api.nvim_buf_set_option(buffer, "modifiable", false)
     local window = vim.fn.win_getid()
@@ -44,6 +46,8 @@ function M.make_read_only_view(path, repository, commit, text)
             group = _GROUP,
         }
     )
+
+    return buffer
 end
 
 
