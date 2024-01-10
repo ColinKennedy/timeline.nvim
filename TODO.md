@@ -19,17 +19,18 @@ stack traceback:
 keymap_manager.lua:27>
 ```
 
+- git notes are broken again. Fix!
 - Add "View This"
     - Get syntax highlighting and general "goodness" works
+- Git commits / File Save
+   - Add "Restore From This"
 
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)
 - Add unittests
-- Git commits / File Save
-   - Add "Restore From This"
-
 - Make sure autocmds get deregistered when the buffer is deleted
+- Add README.md details
 
 - Summary
     - Undo / Redo
@@ -74,8 +75,6 @@ TODO add screenshot
 - Restore
     - Comes in place of a file save
     - Uses global git repository
-- Undo / Redo
-    - If possible, store information about the previous position in the ShaDa tree?
 - File save
     - "Restore from current window" option
     - If no changes, don’t commit anything
