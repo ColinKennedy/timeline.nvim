@@ -31,7 +31,7 @@ local function _parse_all_commit_lines(all_lines)
             current_commit = line
         end
 
-        if line == constant.GIT_DETAILS_LINE_ENDER
+        if line == constant.GIT_DETAILS_LINE_END
         then
             -- We've reached the end of an entry.
             local triaged = git_commit.convert_from_raw_git_show(

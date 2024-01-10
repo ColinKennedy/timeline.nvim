@@ -20,8 +20,11 @@ M.SourceTypes = {
 M.VIEWER_FILE_TYPE = "timeline_viewer"
 
 -- TODO: Add docstring for this
-M.GIT_DETAILS_FORMAT = "git show --no-patch --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%N%n%Bunique-timeline.nvim-ending"
-M.GIT_DETAILS_LINE_ENDER = "unique-timeline.nvim-ending"
+M.GIT_DETAILS_FORMAT = "git show --no-patch --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n__note_start__%n%N%n__note_end__%n__message_start__%n%Bunique-timeline.nvim-ending"
+M.GIT_MESSAGE_START = "__message_start__"
+M.GIT_NOTE_START = "__note_start__"
+M.GIT_NOTE_END = "__note_end__"
+M.GIT_DETAILS_LINE_END = "unique-timeline.nvim-ending"
 
 
 return M

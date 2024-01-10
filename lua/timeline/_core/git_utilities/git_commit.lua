@@ -3,8 +3,9 @@
 --- @module 'timeline._core.git_utilities.git_commit'
 ---
 
+local constant = require("timeline._core.constant")
 local date_mate = require("timeline._core.git_utilities.date_mate")
-local terminal = require("timeline._core.vim_utilities.terminal")
+local tabler = require("timeline._core.vim_utilities.tabler")
 
 
 local M = {}
@@ -22,6 +23,55 @@ local M = {}
 ---     and gives back a new, valid instance.
 
 M.Details = {}
+
+
+--- Find the first line-index in `lines` that matches `key`.
+---
+--- @param lines string[] Some text to check.
+--- @param key string An exact match to expect.
+--- @return boolean # If there's a match, return `true`.
+---
+local function _get_first_index(lines, key)
+    for index, line in ipairs(lines)
+    do
+        if line == key
+        then
+            return index
+        end
+    end
+
+    return nil
+end
+
+
+--- Find the line-index that matches the start of a git message.
+---
+--- @param lines string[] Some text to check.
+--- @return boolean # If there's a match, return `true`.
+---
+local function _get_message_start_index(lines)
+    return _get_first_index(lines, constant.GIT_MESSAGE_START)
+end
+
+
+--- Find the line-index that matches the end of a git note.
+---
+--- @param lines string[] Some text to check.
+--- @return boolean # If there's a match, return `true`.
+---
+local function _get_note_end_index(lines)
+    return _get_first_index(lines, constant.GIT_NOTE_END)
+end
+
+
+--- Find the line-index that matches the start of a git note.
+---
+--- @param lines string[] Some text to check.
+--- @return boolean # If there's a match, return `true`.
+---
+local function _get_note_start_index(lines)
+    return _get_first_index(lines, constant.GIT_NOTE_START)
+end
 
 
 -- TODO: Make this into a proper Lua table / interface
@@ -48,7 +98,7 @@ end
 --- Make a new instance of GitCommitDetails using `data`.
 ---
 --- @param data table<string, ...>
----     The converted data from `_convert_from_raw_git_show`.
+---     The converted data from `convert_from_raw_git_show`.
 --- @return GitCommitDetails
 ---     The created, new instance.
 ---
@@ -149,7 +199,24 @@ function M.convert_from_raw_git_show(text)
         commit_date = date_mate.get_datetime_with_timezone(commit_date_epoch)
     end
 
-    local notes = _parse_git_note(text[8])
+    local note_start = _get_note_start_index(text)
+    local notes = nil
+
+    if note_start ~= nil
+    then
+        local note_end = _get_note_end_index(text)
+        notes = _parse_git_note(
+            table.concat(tabler.slice(text, note_start + 1, note_end + 1), "\n")
+        )
+    end
+
+    local message_start = _get_message_start_index(text)
+    local message = nil
+
+    if message_start ~= nil
+    then
+        message = table.concat(tabler.slice(text, message_start + 1), "\n")
+    end
 
     return {
         -- short_stat = git_parser.parse_git_diff_short_stat(text[9]), -- TODO: Check if I still need this
@@ -158,7 +225,7 @@ function M.convert_from_raw_git_show(text)
         commit = text[1],
         commit_date = commit_date,
         email = text[3],
-        message = text[10],
+        message = message,
         notes = notes,
         parents = parents,
         ref_names = ref_names,
