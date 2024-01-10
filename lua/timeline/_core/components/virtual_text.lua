@@ -5,6 +5,7 @@
 
 local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
+local date_mate = require("timeline._core.git_utilities.date_mate")
 local luatz = require("timeline._vendors.luatz")
 local record_ = require("timeline._core.components.record")
 
@@ -68,7 +69,8 @@ local function _get_datetime_display_text(records, relative)
 
     if relative
     then
-        local now = luatz.now()
+        local now_gmc = luatz.now()  -- UTC timezone
+        local now = date_mate.get_datetime_with_timezone(now_gmc:timestamp())
 
         for _, record in ipairs(records)
         do

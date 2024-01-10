@@ -19,7 +19,6 @@ stack traceback:
 keymap_manager.lua:27>
 ```
 
-- The git commit timezone virtual text is incorrect. Fix
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)
