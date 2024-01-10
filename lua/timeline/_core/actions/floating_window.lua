@@ -118,10 +118,14 @@ function M.show_git_details_under_cursor(details)
     local buffer = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(buffer, 0, -1, false, lines)
 
-    vim.fn.matchadd("TimelineNvimGitCommitAuthor", author)
-    vim.fn.matchadd("TimelineNvimGitCommitCommit", commit)
-    vim.fn.matchadd("TimelineNvimGitCommitDate", datetime)
-    vim.fn.matchadd("TimelineNvimGitCommitEmail", email)
+    local original_buffer = vim.fn.bufnr()
+    vim.cmd("buffer " .. buffer)
+    vim.cmd("syntax enable")
+    vim.cmd.syntax(string.format("match TimelineNvimGitCommitAuthor /%s/", author))
+    vim.cmd.syntax(string.format("match TimelineNvimGitCommitCommit /%s/", commit))
+    vim.cmd.syntax(string.format("match TimelineNvimGitCommitDate /%s/", datetime))
+    vim.cmd.syntax(string.format("match TimelineNvimGitCommitEmail /%s/", email))
+    vim.cmd("buffer " .. original_buffer)
 
     local width = _get_maximum_length(lines)
     local padding = 1  -- TODO: Figure out if this is needed or just a personal issue
