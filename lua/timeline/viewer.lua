@@ -53,11 +53,14 @@ end
 local function _create_viewer()
     vim.cmd.vsplit()
     vim.cmd.enew()
+    vim.cmd.file(constant.VIEWER_FILE_NAME)
 
     vim.cmd("vertical resize " .. configuration.DATA.timeline_window.size)
 
     local buffer = vim.fn.bufnr("%")
 
+    vim.api.nvim_buf_set_option(buffer, "buflisted", false)
+    vim.api.nvim_buf_set_option(buffer, "buftype", "nofile")
     vim.api.nvim_buf_set_option(buffer, "filetype", constant.VIEWER_FILE_TYPE)
     vim.api.nvim_buf_set_option(buffer, "modifiable", false)
 

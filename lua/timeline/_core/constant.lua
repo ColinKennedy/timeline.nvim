@@ -17,6 +17,7 @@ M.SourceTypes = {
     file = "file",
     git = "git",
 }
+M.VIEWER_FILE_NAME = "Timeline Viewer"
 M.VIEWER_FILE_TYPE = "timeline_viewer"
 
 -- TODO: Add docstring for this
