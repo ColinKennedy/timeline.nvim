@@ -19,14 +19,15 @@ stack traceback:
 keymap_manager.lua:27>
 ```
 
+- Add "View This"
+    - Get syntax highlighting and general "goodness" works
+
 - Allow missing source repositories in code. Make sure it doesn't error in the
   unittests (a source repository that has never been saved before is not an
   error)
 - Add unittests
 - Git commits / File Save
    - Add "Restore From This"
-- Add icon colors + configuration options
-- Add text color options
 
 - Make sure autocmds get deregistered when the buffer is deleted
 
@@ -172,39 +173,10 @@ TODO add screenshot
     - Shell cmd ran
         - TODO
 
-- Action
-    - aggregate: boolean
-    - callback: func(record[])
-- Sources
-    - Can read into a partial view (to quickly retrieve data)
-        - Allowed to scroll up / down to get more information
-- Records
-    - datetime: string (I guess)
-    - source: string or object (I guess)
-    - label: string
-    - actions (must be compatible with mappings)
-        - Typical actions:
-            - View details
-                - Can be just a manifest or diffthis or both
-            - Diffthis
-                - Read only
-                - Has a Restore to here mapping
-            - Restore to here
-            - Set quickfix (e.g. Show failed tests)
-            - Set location list (e.g. Show failed tests)
-    - type: string
-    - id: GitCommit | string
 
 - Split the "core" of this plugin which needs autocommands and any callbacks
   needed for specific events to a separate plugin
 - Let the "UI" portion be separate
-
-- Open (diff / summary)
-    - Allows visual selection
-- Open summary
-    - Allows visual selection
-- Show details
-    - Allows visual selection
 
 
 ## Developing
@@ -237,7 +209,6 @@ w | lua require("plenary.reload").reload_module("timeline"); require("timeline")
 - Move all uses of configuration.DATA to a variable that gets passed around to various functions, instead
 
 - Maybe file.lua and git.lua can be combined
-    - At least combine the caches into one
 - Maybe it'd be better to make a diff in a separate tab? idk
 
 - Allow people to toggle / filter / show record types in an existing timeline view without having to recompute everything all over again
@@ -269,9 +240,6 @@ refresh = {
       Details:get_notes() should be renamed to something more explicit like
       Details:get_timeline_notes() to disambiguate them
 
-
-- Add "View This"
-    - Get syntax highlighting and general "goodness" works
 
 ```json
 {
