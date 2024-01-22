@@ -1,4 +1,7 @@
-Visual mode - Fix!
+- Add scroll-history support
+- Add basic unittests
+
+- Visual mode is broken - Fix!
 ```
 Error detected while processing CursorMoved Autocommands for "<buffer=39>":
 Error executing lua callback: ...line.nvim/lua/timeline/_core/components/virtual_text.lua:129: Invalid chunk: expected Array w
@@ -19,6 +22,10 @@ stack traceback:
 keymap_manager.lua:27>
 ```
 
+- Notes for creating read-only buffers
+    - Check if the buffer already exists and don't re-initialize
+    - Find a better way to handle "the user closed this, now return to normal"
+        - Use vim-fugitive as an example
 - git notes are broken again. Fix!
 - Add "View This"
     - Get syntax highlighting and general "goodness" works

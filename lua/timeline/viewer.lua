@@ -85,7 +85,9 @@ end
 
 --- Load a Timeline View for `source_window`.
 ---
---- @param source_window number A 0-or-more value of some buffer to display.
+--- @param source_window? number
+---     A 0-or-more value of some buffer to display. If no value is given, the
+---     current window is used instead.
 ---
 function M.view_window(source_window)
     if source_window == 0
