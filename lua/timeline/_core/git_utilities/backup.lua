@@ -3,6 +3,7 @@
 --- @module 'timeline._core.git_utilities.backup'
 ---
 
+local configuration = require("timeline._core.configuration")
 local constant = require("timeline._core.constant")
 local filer = require("timeline._core.vim_utilities.filer")
 local git_parser = require("timeline._core.git_utilities.git_parser")
@@ -49,6 +50,56 @@ local function _initialize_root(root)
         options
     )
     terminal.run({"git", "config", "--local", "user.name", "timeline.nvim"}, options)
+end
+
+
+--- Get the commit message for the`"file_save"` record.
+---
+--- @param source_path string The saved file-path on-disk.
+--- @return string # The commit created message.
+---
+local function _get_message(source_path)
+    local records = configuration.DATA.records
+
+    if not records then
+        vim.notify(
+            string.format('Records "%s" does not exist. Please fix!', configuration.DATA),
+            vim.log.levels.ERROR
+        )
+
+        return "<No records were found>"
+    end
+
+    local data = records[constant.RecordTypes.file_save]
+
+    if not data then
+        vim.notify(
+            string.format('Records "%s" has no file_save key. Please fix!', records),
+            vim.log.levels.ERROR
+        )
+
+        return "<No file_save settings were found. Please fix!>"
+    end
+
+    local extras = data.extras
+
+    if not extras then
+        -- TODO: Replace with debug logger
+        vim.notify(
+            string.format('file_save data "%s" has no extras key.', records),
+            vim.log.levels.DEBUG
+        )
+
+        return "<No file_save.extras settings were found. Please fix!>"
+    end
+
+    local message = extras.message
+
+    if type(message) == "function" then
+        return message({source_path=source_path})
+    end
+
+    return message or "Updated file"
 end
 
 
@@ -113,7 +164,7 @@ function M.backup_file(root, buffer, record_type)
         return
     end
 
-    local message = "Updated file"  -- TODO: Add a more meaningful message
+    local message = _get_message(source_path)
     command = string.format('git commit -m "%s"', message)
     success, stdout, _ = terminal.run(command, {cwd=root})
 

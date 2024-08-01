@@ -9,7 +9,39 @@ local terminal = require("timeline._core.vim_utilities.terminal")
 local text_mate = require("timeline._core.vim_utilities.text_mate")
 
 
+local _HEAD_FILE_NAME = "HEAD"
+local _GIT_DIRECTORY_NAME = ".git"
+
+
 local M = {}
+
+
+--- Check if `line` is a "this is not a git repository" error message.
+---
+--- @param line string Some git-related error message to check.
+--- @return boolean # If it's a known "not a git repository" error, return `true`.
+---
+local function _is_not_a_repository(line)
+    return (
+        type(line) == "string"
+        and text_mate.starts_with(line, "fatal: not a git repository")
+    )
+end
+
+--- Check if `path` is on-disk or not.
+---
+--- @param path string A file or directory on-disk.
+--- @return boolean # If it exists, return `true`.
+---
+local function _path_exists(path)
+    local stat = vim.loop.fs_stat(path)
+
+    if stat and stat.type then
+        return true
+    end
+
+    return false
+end
 
 --- @class NotePayload
 ---     Extra information added onto commits that indicates what the commit is about.
@@ -20,6 +52,95 @@ local M = {}
 ---     When Timeline Viewer creates a git commit, we save the "current
 ---     version" of Timeline Viewer into the NotePayload in case we need it for
 ---     backwards compatibility reasons later.
+
+
+--- Find the "real" git repository root, starting at `path`.
+---
+--- Most of the time, `path` is the actual root. But if `path` is a git
+--- submodule then we have to keep looking up the real root. And git submodules
+--- can be nested.
+---
+--- @param path string A starting directory to look for some .git directory.
+--- @return string # The fully resolved directory.
+---
+local function _resolve_git_root(path)
+  path = vim.fs.normalize(path)
+
+  if vim.fn.isdirectory(path) == 1 then
+    return path
+  end
+
+  if not vim.fn.filereadable(path) == 1 then
+    -- TODO: Add
+    -- _LOGGER.fmt_warn('Text "%s" is not a file or directory.', path)
+
+    return path
+  end
+
+  local current = path
+  local seen = {}
+
+  while true do
+    if vim.tbl_contains(seen, current) then
+      -- TODO: Add
+      -- _LOGGER.fmt_warn(
+      --   'A recursive loop was detected. Path "%s" is already in "%s" paths.',
+      --   current,
+      --   vim.inspect(seen)
+      -- )
+
+      return current
+    end
+
+    table.insert(seen, current)
+
+    local handler = io.open(current, "r")
+
+    if not handler then
+      -- TODO: Add
+      -- _LOGGER.fmt_warn(
+      --   'Something went wrong. The "%s" .git file could not be opened.',
+      --   current
+      -- )
+
+      return path
+    end
+
+    -- NOTE: e.g. gitdir: ../.git/modules/the_submodule
+    local git_root = handler:read()
+    local relative_path = string.match(git_root, "gitdir: (.+)")
+
+    if not relative_path then
+      -- TODO: Add
+      -- _LOGGER.fmt_warn('Could not parse "%s" for a git repository path.', git_root)
+
+      return path
+    end
+
+    local previous = current
+    -- NOTE: The syntax for git is a bit tricky. The submodule relative path is
+    -- up one so we add .. to get the next directory higher.
+    --
+    current = vim.fs.normalize(vim.fs.joinpath(current, "..", relative_path))
+
+    if not _path_exists(current) then
+      -- TODO: Add
+      -- _LOGGER.fmt_warn(
+      --   'Absolute + Relative "%s" and "%s" points to "%s" which does not exist.',
+      --   previous,
+      --   relative_path,
+      --   current
+      -- )
+
+      return path
+    end
+
+    if vim.fn.isdirectory(current) == 1 then
+      -- We found the end!
+      return current
+    end
+  end
+end
 
 
 --- Find the source code of `path`, in `repository`, at git `commit`.
@@ -148,6 +269,45 @@ function M.get_backup_repository_path(path)
 end
 
 
+--- Get the git branch name / commit string hash.
+---
+--- @param directory string The parent directory that contains a .git sub-directory.
+--- @return string? # The found branch / commit hash, if any.
+---
+function M.get_head(directory)
+    -- TODO: Need to resolve recursive git repositories (as usual)
+    local git_root = _resolve_git_root(vim.fs.joinpath(directory, _GIT_DIRECTORY_NAME))
+    local head_path = vim.fs.joinpath(git_root, _HEAD_FILE_NAME)
+    local handler = io.open(head_path, "r")
+
+    if not handler then
+        -- TODO: Add logging
+        -- HEAD %s could not be opened.
+        return nil
+    end
+
+    local text = handler:read()
+    handler:close()
+
+    local branch = text:match("ref: refs/heads/(.+)$")
+
+    if branch then
+        -- TODO: Add debug - Found "%s" branch in "%s" HEAD, branch, head_path
+        return branch
+    end
+
+    local commit = text:sub(1, 6)
+
+    if commit then
+        -- TODO: Add debug - Found "%s" commit in "%s" HEAD, commit, head_path
+
+        return commit
+    end
+
+    -- TODO: Add debug
+    return nil
+end
+
 --- Find the top-most directory of some git repository.
 ---
 --- @param path string
@@ -162,6 +322,12 @@ function M.get_repository_root(path)
 
     if not success
     then
+        local line = stderr[1]
+
+        if _is_not_a_repository(line) then
+            return nil
+        end
+
         vim.api.nvim_err_writeln(string.format('Command "%s" failed to run.', command))
         vim.api.nvim_err_writeln(stderr)
 

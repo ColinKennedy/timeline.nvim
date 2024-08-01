@@ -12,6 +12,7 @@ local constant = require("timeline._core.constant")
 local M = {}
 
 --- @class TimelineConfiguration
+---     All user setting options for timeline.nvim.
 --- @field git_executable string
 ---     Either a command on PATH or an absolute path to some git executable.
 --- @field mappings table<string, KeymapPrototype>
@@ -90,6 +91,7 @@ M._DEFAULTS = {
                 style = {default=true, link="String"},
                 text = "",
             },
+            extras = { message = "Updated file" },
         },
         [constant.RecordTypes.git_commit] = {
             enabled = true,
