@@ -25,6 +25,8 @@ local M = {}
 ---     a special setup that requires multiple backup directories, you can.
 --- @field sources table<string, SourceConfiguration>
 ---     Customization options for each specific source type.
+--- @field records TimelineRecords
+---     All types of supported records in this timeline.nvim plugin.
 --- @field timeline_window table<string, integer>
 ---     This controls how the Timeline View opens / displays.
 
@@ -40,6 +42,34 @@ local M = {}
 --- @class SourceConfiguration
 --- @field icon string?
 ---     An optional prefix to add to any Record that the Timeline View displays.
+
+--- @class TimelineRecords
+---     All types of supported records in this timeline.nvim plugin.
+--- @field file_save TimelineFilesSave
+---     Controls the behavior of how a user saves a file on-disk.
+
+--- @class TimelineFilesSave
+---     Controls the behavior of how a user saves a file on-disk.
+--- @field enabled boolean
+---     If `true`, any time you save a file, a saved record is created to remember it.
+--- @field icon TimelineOutlinerIcon
+---     An indicator for this type of record.
+--- @field extras TimelineFileSaveExtras
+---     Special attributes that only apply to the file_save type.
+
+--- @class TimelineFileSaveExtras
+---     Special attributes that only apply to the file_save type.
+--- @field message string | fun(FileSaveMessageData): string
+---     A file_save
+
+-- TODO: Is `default` used here, actually?
+
+--- @class TimelineOutlinerIcon
+---     An indicator for some record.
+--- @field style TimelineOutlinerIconStyle
+---     The appearance of the icon.
+--- @field text string
+---     The icon text. It's recommended to use only a single character.
 
 local _BACKUP_DIRECTORY = vim.fn.expand("~/.vim_custom_backups")
 

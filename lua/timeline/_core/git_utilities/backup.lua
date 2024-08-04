@@ -13,6 +13,12 @@ local version = require("timeline._core.version")
 
 local M = {}
 
+--- @class FileSaveMessageData
+---     Packed data used to decide the commit message when there is a file_save.
+--- @field source_path string
+---     The absolute path to a file that was saved on-disk.
+---
+
 local _GROUP_NAME = "TimelineGitBackupGroup"
 local _GROUP = vim.api.nvim_create_augroup(_GROUP_NAME, { clear = true })
 
