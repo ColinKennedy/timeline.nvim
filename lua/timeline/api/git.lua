@@ -13,6 +13,8 @@ local M = {}
 ---     The created message.
 ---
 function M.get_default_file_save_message(data)
+    local text_mate = require("timeline._core.text_mate")
+
     local directory = vim.fn.fnamemodify(data.source_path, ":p:h")
     local summary = M.get_summary(directory)
 
@@ -22,8 +24,8 @@ function M.get_default_file_save_message(data)
         output = summary .. ": "
     end
 
-    local relative_path = _get_relative_path(directory, data.source_path)
-    relative_path = _remove_prefix_directory(relative_path)
+    local relative_path = text_mate.get_relative_path(directory, data.source_path)
+    relative_path = text_mate.remove_prefix_directory(relative_path)
 
     return output .. "Updated file: " .. relative_path
 end
