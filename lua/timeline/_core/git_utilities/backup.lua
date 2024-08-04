@@ -102,7 +102,7 @@ local function _get_message(source_path)
     local message = extras.message
 
     if type(message) == "function" then
-        return message({source_path=source_path})
+        return message({ source_path=source_path })
     end
 
     return message or "Updated file"

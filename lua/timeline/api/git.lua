@@ -24,10 +24,9 @@ function M.get_default_file_save_message(data)
         output = summary .. ": "
     end
 
-    local relative_path = text_mate.get_relative_path(directory, data.source_path)
-    relative_path = text_mate.remove_prefix_directory(relative_path)
+    local file_name = vim.fn.fnamemodify(data.source_path, ":t")
 
-    return output .. "Updated file: " .. relative_path
+    return output .. "Updated file: " .. file_name
 end
 
 
