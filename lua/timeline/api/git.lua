@@ -22,8 +22,10 @@ function M.get_default_file_save_message(data)
         output = summary .. ": "
     end
 
-    -- TODO: Make this file relative to the repository
-    return output .. "Updated file: " .. data.source_path
+    local relative_path = _get_relative_path(directory, data.source_path)
+    relative_path = _remove_prefix_directory(relative_path)
+
+    return output .. "Updated file: " .. relative_path
 end
 
 
