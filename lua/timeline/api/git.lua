@@ -13,8 +13,6 @@ local M = {}
 ---     The created message.
 ---
 function M.get_default_file_save_message(data)
-    local text_mate = require("timeline._core.text_mate")
-
     local directory = vim.fn.fnamemodify(data.source_path, ":p:h")
     local summary = M.get_summary(directory)
 
