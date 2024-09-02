@@ -25,7 +25,10 @@ local _GROUP = vim.api.nvim_create_augroup(_GROUP_NAME, { clear = true })
 
 -- TODO: Make this read from a configuration instead
 local function _can_backup(buffer)
-    return vim.bo[buffer].filetype ~= "gitcommit"
+    return not vim.tbl_contains(
+        {"gitcommit", "gitrebase", "gitmerge"},
+        vim.bo[buffer].filetype
+    )
 end
 
 --- Make `root` into a git repository if it isn't already.
