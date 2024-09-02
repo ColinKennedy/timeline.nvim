@@ -23,6 +23,11 @@ local _GROUP_NAME = "TimelineGitBackupGroup"
 local _GROUP = vim.api.nvim_create_augroup(_GROUP_NAME, { clear = true })
 
 
+-- TODO: Make this read from a configuration instead
+local function _can_backup(buffer)
+    return vim.bo[buffer].filetype ~= "gitcommit"
+end
+
 --- Make `root` into a git repository if it isn't already.
 ---
 --- @param root string An absolute directory to a git repository on-disk.
@@ -246,7 +251,9 @@ function M.setup(root)
                 --
                 vim.schedule(
                     function()
-                        M.backup_file(root, buffer, constant.RecordTypes.file_save)
+                        if _can_backup(buffer) then
+                            M.backup_file(root, buffer, constant.RecordTypes.file_save)
+                        end
                     end
                 )
             end,
