@@ -116,6 +116,14 @@ local function _get_message(source_path)
     return message or "Updated file"
 end
 
+--- Change a drive like `"C:\"` to `"C\"`.
+---
+---@param text string A raw path on-disk of some Windows path.
+---@return string # The modified (but no longer valid-Windows-path) text.
+---
+local function _strip_windows_drive(text)
+    return text:gsub(":", "")
+end
 
 --- Make a copy of `buffer` into `root`, if needed.
 ---
@@ -147,7 +155,7 @@ function M.backup_file(root, buffer, record_type)
     local repository_path = filer.join_path(
         {
             root,
-            git_parser.get_backup_repository_path(source_path),
+            _strip_windows_drive(git_parser.get_backup_repository_path(source_path)),
         }
     )
 
