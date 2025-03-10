@@ -122,7 +122,7 @@ end
 ---@return string # The modified (but no longer valid-Windows-path) text.
 ---
 local function _strip_windows_drive(text)
-    return text:gsub(":", "")
+    return (text:gsub(":", ""))
 end
 
 --- Make a copy of `buffer` into `root`, if needed.
