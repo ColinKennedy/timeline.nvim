@@ -1,4 +1,15 @@
 - Add scroll-history support
+- Add a health-check command. Notify user if something broke
+
+Consider git maintanence command
+
+Try it out
+https://youtu.be/aolI_Rz0ZqY?si=nsxNe3wR7pZO_F_N&t=1340
+
+how to fix slow git status calls
+https://youtu.be/aolI_Rz0ZqY?si=NLxxnC4pCNIpAA3G&t=1726
+
+
 - Add basic unittests
 
 - Visual mode is broken - Fix!
