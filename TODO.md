@@ -5,9 +5,21 @@ Consider git maintanence command
 
 Try it out
 https://youtu.be/aolI_Rz0ZqY?si=nsxNe3wR7pZO_F_N&t=1340
+```
+git maintanence start
+```
 
 how to fix slow git status calls
 https://youtu.be/aolI_Rz0ZqY?si=NLxxnC4pCNIpAA3G&t=1726
+```
+git config core.untrackedcache true
+git config core.fsmonitor true
+```
+
+
+
+
+
 
 
 - Add basic unittests
