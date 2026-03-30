@@ -26,7 +26,12 @@ local _GROUP = vim.api.nvim_create_augroup(_GROUP_NAME, { clear = true })
 -- TODO: Make this read from a configuration instead
 local function _can_backup(buffer)
     return not vim.tbl_contains(
-        {"gitcommit", "gitrebase", "gitmerge"},
+        {
+            "diff",  -- `git add -p` edit mode sets the filetype to `"diff"`.
+            "gitcommit",
+            "gitrebase",
+            "gitmerge",
+        },
         vim.bo[buffer].filetype
     )
 end
@@ -161,6 +166,11 @@ function M.backup_file(root, buffer, record_type)
 
     local lines = vim.api.nvim_buf_get_lines(buffer, 0, -1, false)
     local directory = vim.fn.fnamemodify(repository_path, ":h")
+
+    if vim.fn.filereadable(directory) == 1
+    then
+        vim.fn.delete(directory)
+    end
 
     if vim.fn.isdirectory(directory) ~= 1
     then

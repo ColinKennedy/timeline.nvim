@@ -35,9 +35,9 @@ end
 ---
 function M.get_summary(path)
     local git_parser = require("timeline._core.git_utilities.git_parser")
-    local directory = git_parser.get_repository_root(path)
+    local success, directory = pcall(function() git_parser.get_repository_root(path) end)
 
-    if not directory then
+    if not succes or not directory then
         return nil
     end
 
